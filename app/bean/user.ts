@@ -9,4 +9,4 @@ export class User {
         public createdAt: string,
         public updatedAt: string,
     ) {}
-}
+};
