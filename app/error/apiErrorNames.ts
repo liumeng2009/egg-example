@@ -38,18 +38,4 @@ export class ErrorNames {
 
         return errorinfo;
     }
-
-    static getErrorCode= (error_name) => {
-        let errorcode;
-        const UNKNOW_ERROR = 'unknowError';
-        if (error_name) {
-            const errorvalue = ErrorNames.errorMap.get(error_name);
-            errorcode = errorvalue.code;
-        }
-        if (!errorcode) {
-            error_name = UNKNOW_ERROR;
-            errorcode = ErrorNames.errorMap.get(error_name).code;
-        }
-        return errorcode;
-    }
 };

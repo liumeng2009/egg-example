@@ -7,8 +7,7 @@ export default class UserAccessService extends Service {
         const {ctx, service} = this;
         const userResult = await service.user.findByMobile(user.mobile);
         if (!userResult) {
-            ctx.throw(ErrorNames.getErrorCode(ErrorNames.USERNAME_NOT_EXIST)
-                , ErrorNames.getErrorInfo(ErrorNames.USERNAME_NOT_EXIST, undefined));
+            ctx.throw(533, ErrorNames.getErrorInfo(ErrorNames.USERNAME_NOT_EXIST, undefined));
         }
     }
 }
