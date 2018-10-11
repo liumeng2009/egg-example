@@ -8,7 +8,9 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + '_1539080601714_4183';
 
   // add your egg config in here
-  config.middleware = [];
+  config.middleware = [
+      'errorHandler',
+  ];
 
   // add your special config in here
   const bizConfig = {
@@ -19,7 +21,15 @@ export default (appInfo: EggAppInfo) => {
     dialect: 'mysql',
     host: '127.0.0.1',
     port: 3306,
-    database: 'egg-project',
+    database: 'database_egg_prod',
+    username: 'root',
+    password: '357852',
+  }
+
+  config.jwt = {
+      secret: 'liumeng',
+      enable: true,
+      match: '/jwt',
   }
 
   // the return config will combines to EggAppConfig

@@ -3,9 +3,13 @@
 
 import 'egg'; // Make sure ts to import egg declaration at first
 import Test from '../../../app/service/Test';
+import User from '../../../app/service/user';
+import UserAccess from '../../../app/service/userAccess';
 
 declare module 'egg' {
   interface IService {
     test: Test;
+    user: User;
+    userAccess: UserAccess;
   }
 }

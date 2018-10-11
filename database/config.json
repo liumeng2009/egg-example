@@ -1,22 +1,22 @@
 {
   "development": {
     "username": "root",
-    "password": null,
-    "database": "database_development",
+    "password": "357852",
+    "database": "database_egg_development",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": null,
-    "database": "database_test",
+    "password": "357852",
+    "database": "database_egg_test",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": null,
-    "database": "database_production",
+    "password": "357852",
+    "database": "database_egg_prod",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
