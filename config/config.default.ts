@@ -28,8 +28,16 @@ export default (appInfo: EggAppInfo) => {
 
   config.jwt = {
       secret: 'liumeng',
-      enable: true,
-      match: '/jwt',
+  }
+
+  config.security = {
+    csrf: {
+      enable: false,
+    },
+    domainWhiteList: [
+        'http://127.0.0.1:4200',
+        'http://localhost:4200',
+    ],
   }
 
   // the return config will combines to EggAppConfig

@@ -1,11 +1,13 @@
-export class ErrorNames {
+                                                                                       export class ErrorNames {
     static UNKNOW_ERROR = 'unknowError';
     static USERNAME_NOT_EXIST = 'userNameNotExist';
+    static PASSWORD_ERROR = 'passwordError';
     static errorMap = new Map();
     constructor(
     ) {
         ErrorNames.errorMap.set(ErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
         ErrorNames.errorMap.set(ErrorNames.USERNAME_NOT_EXIST, { code: 53300, message: '用户不存在！' });
+        ErrorNames.errorMap.set(ErrorNames.PASSWORD_ERROR, {code: 53301, message: '密码错误'});
     }
 
     static getErrorInfo= (error_name, custom_info_array) => {

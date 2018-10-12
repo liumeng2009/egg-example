@@ -5,4 +5,6 @@ export default (app: Application) => {
 
   router.get('/', controller.home.index);
   router.resources('users', '/api/users', controller.user);
+
+  router.post('/api/login', controller.userAccess.login);
 };

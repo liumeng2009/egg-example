@@ -9,5 +9,10 @@ export default class UserAccessService extends Service {
         if (!userResult) {
             ctx.throw(533, ErrorNames.getErrorInfo(ErrorNames.USERNAME_NOT_EXIST, undefined));
         }
+        const verifyPsw = await ctx.compare(user.password, userResult.password);
+        if (!verifyPsw) {
+            ctx.throw(533, ErrorNames.getErrorInfo(ErrorNames.PASSWORD_ERROR, undefined));
+        }
+        return {token: await service.actionToken.apply(user.id, user.mobile, user.realname)};
     }
 }

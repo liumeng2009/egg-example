@@ -14,6 +14,14 @@ const plugin: EggPlugin = {
         enable: true,
         package: 'egg-validate',
     },
+    jwt: {
+        enable: true,
+        package: 'egg-jwt',
+    },
+    cors: {
+        enable: true,
+        package: 'egg-cors',
+    },
 };
 
 export default plugin;

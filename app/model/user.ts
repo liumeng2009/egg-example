@@ -12,6 +12,9 @@ module.exports = (app) => {
         status: INTEGER,
         createdAt: {type: DATE},
         updatedAt: {type: DATE},
+    }, {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt',
     });
     return User;
 };
