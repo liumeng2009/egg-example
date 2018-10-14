@@ -10,6 +10,7 @@ module.exports = (app) => {
         password: {type: STRING(200), required: true},
         age: INTEGER,
         status: INTEGER,
+        token: STRING(500),
         createdAt: {type: DATE},
         updatedAt: {type: DATE},
     }, {

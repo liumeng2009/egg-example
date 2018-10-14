@@ -13,9 +13,10 @@ export default class UserAccessController extends Controller {
 
     async login() {
         const {ctx, service} = this;
-        ctx.validate(this.userLoginTransfer);
+        //ctx.validate(this.userLoginTransfer);
         const payload = ctx.request.body || {};
         const res = await service.userAccess.login(payload);
-        ctx.helper.success({ctx, res});
+        const message = '';
+        await ctx.helper.success(ctx, res, message);
     }
 }

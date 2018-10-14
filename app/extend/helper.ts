@@ -1,6 +1,7 @@
 exports.success = (ctx, res) => {
+    console.log('helper' + res);
     ctx.body = {
-        status: 0,
+        code: 0,
         data: res,
         message: '请求成功',
     };

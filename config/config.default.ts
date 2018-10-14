@@ -30,6 +30,10 @@ export default (appInfo: EggAppInfo) => {
       secret: 'liumeng',
   }
 
+  config.bcrypt = {
+    saltRounds: 10,
+  }
+
   config.security = {
     csrf: {
       enable: false,

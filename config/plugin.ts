@@ -22,6 +22,10 @@ const plugin: EggPlugin = {
         enable: true,
         package: 'egg-cors',
     },
+    bcrypt: {
+        enable: true,
+        package: 'egg-bcrypt',
+    },
 };
 
 export default plugin;
