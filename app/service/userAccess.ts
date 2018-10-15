@@ -30,9 +30,9 @@ module.exports = (app) => {
             if (!userResult) {
                 throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, undefined);
             }
-            const jwtVerifyResult = await app.jwt.verify(token, config.jwt.secret);
+            await app.jwt.verify(token, config.jwt.secret);
             return {
-                jwt: jwtVerifyResult,
+                user: userResult,
             };
         }
     };
