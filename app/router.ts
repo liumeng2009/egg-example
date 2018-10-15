@@ -7,4 +7,5 @@ export default (app: Application) => {
   router.resources('users', '/api/users', controller.user);
 
   router.post('/api/login', controller.userAccess.login);
+  router.get('/api/user/checktoken', controller.userAccess.checkToken);
 };

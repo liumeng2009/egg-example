@@ -13,10 +13,17 @@ export default class UserAccessController extends Controller {
 
     async login() {
         const {ctx, service} = this;
-        //ctx.validate(this.userLoginTransfer);
+        ctx.validate(this.userLoginTransfer);
         const payload = ctx.request.body || {};
         const res = await service.userAccess.login(payload);
-        const message = '';
+        const message = '登录成功！' + res.user.mobile + '，欢迎你！';
         await ctx.helper.success(ctx, res, message);
+    }
+
+    async checkToken() {
+        const {ctx, service} = this;
+        const token = ctx.request.headers.authorization;
+        const jwtResult = await service.userAccess.checkToken(token);
+        await ctx.helper.success(ctx, jwtResult, undefined);
     }
 }
