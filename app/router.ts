@@ -8,4 +8,6 @@ export default (app: Application) => {
 
   router.post('/api/login', controller.userAccess.login);
   router.get('/api/user/checktoken', controller.userAccess.checkToken);
+
+  router.get('/api/role/index', controller.role.index);
 };

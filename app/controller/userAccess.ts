@@ -16,7 +16,13 @@ export default class UserAccessController extends Controller {
         ctx.validate(this.userLoginTransfer);
         const payload = ctx.request.body || {};
         const res = await service.userAccess.login(payload);
-        const message = '登录成功！' + res.user.mobile + '，欢迎你！';
+        let username;
+        if (res.user.realname) {
+            username = res.user.realname;
+        } else {
+            username = res.user.mobile;
+        }
+        const message = '登录成功！' + username + '，欢迎你！';
         await ctx.helper.success(ctx, res, message);
     }
 

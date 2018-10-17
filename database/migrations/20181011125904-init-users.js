@@ -1,5 +1,5 @@
 'use strict';
-const bcrypt=require('bcryptjs');
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     /*
@@ -17,17 +17,21 @@ module.exports = {
     //const hash = bcrypt.hashSync(adminPassword, 10);
     //console.log('加密密码是：'+hash);
     //return Promise.all([
-        return queryInterface.createTable('users',{
-            id:{type:INTEGER,primaryKey:true,autoIncrement:true},
-            mobile:{type:STRING(30),allowNull:false},
-            realname:{type:STRING(30)},
-            password:{type:STRING(200),allowNull:false},
-            age:INTEGER,
-            status:{type:INTEGER,defaultValue:1},
-            token:{type:STRING(500)},
-            createdAt:{type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},
-            updatedAt:{type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},
-        })
+    return queryInterface.createTable('users',{
+        id:{type:INTEGER,primaryKey:true,autoIncrement:true},
+        mobile:{type:STRING(30),allowNull:false,unique:true},
+        realname:{type:STRING(30)},
+        password:{type:STRING(200),allowNull:false},
+        age:INTEGER,
+        roleId:INTEGER,
+        avatar:STRING(200),
+        avatarUseSys:{type:INTEGER,defaultValue:1},
+        status:{type:INTEGER,defaultValue:1},
+        token:{type:STRING(500)},
+        webappToken:{type:STRING(500)},
+        createdAt:{type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},
+        updatedAt:{type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},
+    })
     //        ,
 
 

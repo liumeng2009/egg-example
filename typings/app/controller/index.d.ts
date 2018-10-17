@@ -3,12 +3,14 @@
 
 import 'egg'; // Make sure ts to import egg declaration at first
 import Home from '../../../app/controller/home';
+import Role from '../../../app/controller/role';
 import User from '../../../app/controller/user';
 import UserAccess from '../../../app/controller/userAccess';
 
 declare module 'egg' {
   interface IController {
     home: Home;
+    role: Role;
     user: User;
     userAccess: UserAccess;
   }

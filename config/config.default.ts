@@ -44,6 +44,12 @@ export default (appInfo: EggAppInfo) => {
     ],
   }
 
+  config.static = {
+
+  }
+
+  config.pageSize = 15
+
   // the return config will combines to EggAppConfig
   return {
     ...config,

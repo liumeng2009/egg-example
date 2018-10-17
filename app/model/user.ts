@@ -9,8 +9,12 @@ module.exports = (app) => {
         realname: {type: STRING(30)},
         password: {type: STRING(200), required: true},
         age: INTEGER,
+        roleId: INTEGER,
+        avatar: STRING(200),
+        avatarUseSys: {type: INTEGER},
         status: INTEGER,
         token: STRING(500),
+        webappToken: STRING(500),
         createdAt: {type: DATE},
         updatedAt: {type: DATE},
     }, {

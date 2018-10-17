@@ -23,14 +23,20 @@ export default class UserService extends Service {
         });
     }
 
-    async findByToken(token) {
+    async findByTokenFull(token) {
+        const userModel = this.ctx.model.User;
+        const roleModel = this.ctx.model.Role;
+        userModel.belongsTo(roleModel, {foreignKey : 'roleId'});
         return this.ctx.model.User.findOne({
             where: {
                 token: token,
                 status: 1,
             },
-            createdAt: false,
-            updatedAt: false,
+            include : [
+                {
+                    model : roleModel,
+                },
+            ],
         });
     }
 

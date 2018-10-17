@@ -11,6 +11,5 @@ exports.success = (ctx, res, message) => {
             data: res,
         };
     }
-
     ctx.status = 200;
 }

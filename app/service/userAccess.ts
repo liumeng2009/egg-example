@@ -26,14 +26,12 @@ module.exports = (app) => {
         }
         async checkToken(token: string) {
             const {service, config} = this;
-            const userResult = await service.user.findByToken(token);
+            const userResult = await service.user.findByTokenFull(token);
             if (!userResult) {
                 throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, undefined);
             }
             await app.jwt.verify(token, config.jwt.secret);
-            return {
-                user: userResult,
-            };
+            return userResult;
         }
     };
 }
