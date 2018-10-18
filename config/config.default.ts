@@ -48,6 +48,10 @@ export default (appInfo: EggAppInfo) => {
 
   }
 
+  config.validate = {
+      widelyUndefined : true,
+  }
+
   config.pageSize = 15
 
   // the return config will combines to EggAppConfig

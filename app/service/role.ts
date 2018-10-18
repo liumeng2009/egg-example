@@ -11,9 +11,9 @@ export default class RoleService extends Service {
             pagesize = this.ctx.app.config.pageSize;
         }
         if (searchkey) {
-           return this.ctx.model.Role.findAll({
+           return this.ctx.model.Role.findAndCountAll ({
                where: {
-                   name: {$regex: searchkey},
+                   name: {$regexp: searchkey},
                    status: 1,
                },
                order: [['createdAt', 'ASC']],
@@ -21,7 +21,7 @@ export default class RoleService extends Service {
                limit: pagesize,
            });
         }else {
-            return this.ctx.model.Role.findAll({
+            return this.ctx.model.Role.findAndCountAll ({
                 where: {
                     status: 1,
                 },

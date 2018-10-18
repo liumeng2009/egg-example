@@ -8,7 +8,7 @@ export default class RoleController extends Controller {
 
         this.roleIndexTransfer = {
             page: {type: 'number', required: false, default: 1},
-            pagesize: {type: 'number', required: false, default: ctx.app.config.pagesize},
+            pagesize: {type: 'number', required: false, convertType: 'int',  default: ctx.app.config.pagesize},
             searchkey: {type: 'string', required: false},
         };
     }
