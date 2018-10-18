@@ -5,7 +5,13 @@ exports.success = (ctx, res, message) => {
             data: res,
             message: message,
         };
-    } else {
+    }else if (message === '') {
+        ctx.body = {
+            code: 0,
+            data: res,
+            message: '请求成功！',
+        };
+    }else {
         ctx.body = {
             code: 0,
             data: res,

@@ -7,8 +7,6 @@ export default class UserService extends Service {
                 mobile: mobile,
                 status: 1,
             },
-            createdAt: false,
-            updatedAt: false,
         });
     }
 
@@ -18,8 +16,6 @@ export default class UserService extends Service {
                 id: id,
                 status: 1,
             },
-            createdAt: false,
-            updatedAt: false,
         });
     }
 

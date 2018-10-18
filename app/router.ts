@@ -9,5 +9,8 @@ export default (app: Application) => {
   router.post('/api/login', controller.userAccess.login);
   router.get('/api/user/checktoken', controller.userAccess.checkToken);
 
-  router.get('/api/role/index', controller.role.index);
+  router.get('/api/role', controller.role.index);
+  router.get('/api/role/:id', controller.role.show);
+  router.post('/api/role', controller.role.create);
+  router.put('/api/role', controller.role.update);
 };

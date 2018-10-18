@@ -1,4 +1,6 @@
 import {Service} from 'egg';
+import {ApiError} from '../error/apiError';
+import {ApiErrorNames} from '../error/apiErrorNames';
 
 export default class RoleService extends Service {
     async index(payload) {
@@ -30,5 +32,43 @@ export default class RoleService extends Service {
                 limit: pagesize,
             });
         }
+    }
+
+    async findByName(name) {
+        return this.ctx.model.Role.findOne({
+            where: {
+                name: name,
+            },
+        });
+    }
+
+    async findById(id) {
+        return this.ctx.model.Role.findOne({
+            where: {
+                id: id,
+                status: 1,
+            },
+        });
+    }
+
+    async create(payload) {
+        const {ctx} = this;
+        const roleResult = await this.findByName(payload.name);
+        if (roleResult) {
+            throw new ApiError(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, undefined);
+        }
+        return ctx.model.Role.create(payload);
+    }
+
+    async update(payload) {
+        const roleResultId = await this.findById(payload.id);
+        if (!roleResultId) {
+            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
+        }
+        const roleResultName = await this.findByName(payload.name);
+        if (roleResultName && roleResultName.id !== payload.id) {
+            throw new ApiError(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, undefined);
+        }
+        return roleResultId.update(payload);
     }
 }

@@ -4,20 +4,23 @@
     "password": "357852",
     "database": "database_egg_development",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "timezone": "+8:00"
   },
   "test": {
     "username": "root",
     "password": "357852",
     "database": "database_egg_test",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "timezone": "+8:00"
   },
   "production": {
     "username": "root",
     "password": "357852",
     "database": "database_egg_prod",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "timezone": "+8:00"
   }
 }

@@ -3,12 +3,16 @@ export const ApiErrorNames = {
     USERNAME_NOT_EXIST : 'userNameNotExist',
     PASSWORD_ERROR : 'passwordError',
     TOKEN_NOT_EXIST: 'tokenNotExist',
+    ROLE_NAME_MUST_UNIQUE: 'roleNameMustUnique',
+    ROLE_ID_NOT_EXIST: 'roleIdNotExist',
 };
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
 ApiErrorMap.set(ApiErrorNames.USERNAME_NOT_EXIST, { code: 53300, message: '用户不存在！' });
-ApiErrorMap.set(ApiErrorNames.PASSWORD_ERROR, {code: 53301, message: '密码错误'});
-ApiErrorMap.set(ApiErrorNames.TOKEN_NOT_EXIST, {code: 53302, message: 'token不存在'});
+ApiErrorMap.set(ApiErrorNames.PASSWORD_ERROR, {code: 53301, message: '密码错误！'});
+ApiErrorMap.set(ApiErrorNames.TOKEN_NOT_EXIST, {code: 53302, message: 'token不存在！'});
+ApiErrorMap.set(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, {code: 53303, message: '角色的名称已经存在！'});
+ApiErrorMap.set(ApiErrorNames.ROLE_ID_NOT_EXIST, {code: 53304, message: '角色信息不存在！'});
 
 export class ErrorTools {
     static getErrorInfo= (error_name) => {

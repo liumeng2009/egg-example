@@ -24,6 +24,7 @@ export default (appInfo: EggAppInfo) => {
     database: 'database_egg_prod',
     username: 'root',
     password: '357852',
+    timezone: '+8:00',
   }
 
   config.jwt = {
