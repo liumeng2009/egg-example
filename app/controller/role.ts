@@ -58,4 +58,12 @@ export default class RoleController extends Controller {
         const res = await service.role.update(payload);
         await ctx.helper.success(ctx, res, '');
     }
+
+    async destroy() {
+        const {ctx, service} = this;
+        ctx.validate(this.roleShowTransfer, ctx.params);
+        const payload = ctx.params;
+        const res = await service.role.destroy(payload.id);
+        await ctx.helper.success(ctx, res, '');
+    }
 }

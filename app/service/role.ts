@@ -6,32 +6,30 @@ export default class RoleService extends Service {
     async index(payload) {
         let {page, pagesize} = payload;
         const {searchkey} = payload;
+        let whereOBj = {}
+        if (searchkey) {
+            whereOBj = {status: 1, name: {$regexp: searchkey}};
+        } else {
+            whereOBj = {status: 1};
+        }
+        if (page === 0 && pagesize === 0) {
+            return this.ctx.model.Role.findAndCountAll ({
+                where: whereOBj,
+                order: [['createdAt', 'ASC']],
+            });
+        }
         if (!page) {
            page = 1;
         }
         if (!pagesize) {
             pagesize = this.ctx.app.config.pageSize;
         }
-        if (searchkey) {
-           return this.ctx.model.Role.findAndCountAll ({
-               where: {
-                   name: {$regexp: searchkey},
-                   status: 1,
-               },
-               order: [['createdAt', 'ASC']],
-               offset: (page - 1) * pagesize,
-               limit: pagesize,
-           });
-        }else {
-            return this.ctx.model.Role.findAndCountAll ({
-                where: {
-                    status: 1,
-                },
-                order: [['createdAt', 'ASC']],
-                offset: (page - 1) * pagesize,
-                limit: pagesize,
-            });
-        }
+        return this.ctx.model.Role.findAndCountAll ({
+           where: whereOBj,
+           order: [['createdAt', 'ASC']],
+           offset: (page - 1) * pagesize,
+           limit: pagesize,
+        });
     }
 
     async findByName(name) {
@@ -70,5 +68,16 @@ export default class RoleService extends Service {
             throw new ApiError(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, undefined);
         }
         return roleResultId.update(payload);
+    }
+
+    async destroy(id) {
+        const roleResult = await this.findById(id);
+        if (!roleResult) {
+            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
+        }
+        if (id === 1) {
+            throw new ApiError(ApiErrorNames.ROLE_CAN_NOT_DELETE, undefined);
+        }
+        return roleResult.update({status: 0});
     }
 }

@@ -1,48 +1,65 @@
 import {Controller} from 'egg';
 
-function toInt(str) {
-    if (typeof str === 'number') {return str; };
-    if (!str) {return str; };
-    return parseInt(str, 10) || 0;
-}
-
-const createRule = {
-    name : 'string',
-    password: 'string',
-    age : 'number',
-};
-
 export default class UserController extends Controller {
+    public userIndexTransfer;
+    public userShowTransfer;
+    public userTransfer;
+    constructor(ctx) {
+        super(ctx);
+        this.userIndexTransfer = {
+            page: {type: 'number', required: false, convertType: 'int', default: 1},
+            pagesize: {type: 'number', required: false, convertType: 'int',  default: ctx.app.config.pagesize},
+            searchkey: {type: 'string', required: false},
+            roles: {type: 'array', required: false, itemType: 'int'},
+        };
+        this.userShowTransfer = {
+            id: {type: 'number', required: true, convertType: 'int'},
+        };
+        this.userTransfer = {
+            mobile: {type: 'string', required: true},
+            realname: {type: 'string', required: false},
+            password: {type: 'string', required: true},
+            age: {type: 'number', required: false, convertType: 'int'},
+            roleId: {type: 'number', required: false, convertType: 'int'},
+            avatar: {type: 'string', required: false},
+            avatarUseSys: {type: 'enum', values: [1, 0], required: false, default: 1},
+        };
+    }
     async index() {
-        const ctx = this.ctx;
-        const query = {limit: toInt(ctx.query.limit), offset: toInt(ctx.query.offset)};
-        ctx.body = await ctx.model.User.findAll(query);
+        const {ctx, service} = this;
+        const payload = ctx.query;
+        const roleArray = [];
+        if (ctx.query.roles) {
+            const array = ctx.query.roles.split(',');
+            for (const arr of array) {
+                try {
+                    // @ts-ignore
+                    roleArray.push(parseInt(arr.toString(), 10));
+                }catch {
+
+                }
+            }
+        }
+        payload.roles = roleArray;
+        console.log(payload);
+        ctx.validate(this.userIndexTransfer, payload);
+        const res = await service.user.index(payload);
+        await ctx.helper.success(ctx, res, undefined);
     }
 
     async show() {
-        const ctx = this.ctx;
-        ctx.body = await ctx.model.User.findById(toInt(ctx.params.id));
+        const {ctx, service} = this;
+        ctx.validate(this.userShowTransfer, ctx.params);
+        const payload = ctx.params;
+        const res = await service.user.findById(payload.id);
+        await ctx.helper.success(ctx, res, undefined);
     }
 
     async create() {
-        const ctx = this.ctx;
-        ctx.validate(createRule, ctx.request.body);
-        const { name, age} = ctx.request.body;
-        const user = await ctx.model.User.create({name, age});
-        ctx.status = 201;
-        ctx.body = user;
-    }
-
-    async destroy() {
-        const ctx = this.ctx;
-        const id = toInt(ctx.params.id);
-        const user = await ctx.model.User.findById(id);
-        if (!user) {
-            ctx.status = 404;
-            return;
-        }
-
-        await user.destroy();
-        ctx.status = 200;
+        const {ctx, service} = this;
+        ctx.validate(this.userTransfer, ctx.request.body);
+        const payload = ctx.request.body || {};
+        const res = await service.user.create(payload);
+        await ctx.helper.success(ctx, res, '');
     }
 };
