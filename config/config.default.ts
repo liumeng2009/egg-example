@@ -55,6 +55,8 @@ export default (appInfo: EggAppInfo) => {
 
   config.pageSize = 15
 
+  config.sysAvatarPath = appInfo.baseDir + '/app/public/uploads/avatar/dongman'
+
   // the return config will combines to EggAppConfig
   return {
     ...config,

@@ -62,4 +62,10 @@ export default class UserController extends Controller {
         const res = await service.user.create(payload);
         await ctx.helper.success(ctx, res, '');
     }
+
+    async sysAvatar() {
+        const {ctx, service} = this;
+        const res = await service.user.sysAvatars();
+        await ctx.helper.success(ctx, res, undefined);
+    }
 };

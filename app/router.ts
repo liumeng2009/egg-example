@@ -12,6 +12,7 @@ export default (app: Application) => {
   router.get('/api/user', controller.user.index);
   router.get('/api/user/:id', controller.user.show);
   router.post('/api/role', controller.user.create);
+  router.get('/api/avatar', controller.user.sysAvatar);
 
   router.get('/api/role', controller.role.index);
   router.get('/api/role/:id', controller.role.show);

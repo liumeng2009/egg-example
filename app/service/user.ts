@@ -1,6 +1,7 @@
 import {Service} from 'egg';
-import {ApiError} from "../error/apiError";
-import {ApiErrorNames} from "../error/apiErrorNames";
+import {ApiError} from '../error/apiError';
+import {ApiErrorNames} from '../error/apiErrorNames';
+import * as fs from 'fs';
 
 export default class UserService extends Service {
     async findByMobile(mobile) {
@@ -45,7 +46,6 @@ export default class UserService extends Service {
     }
 
     async index(payload) {
-        console.log(payload);
         let {page, pagesize} = payload;
         const {searchkey, roles} = payload;
         const userModel = this.ctx.model.User;
@@ -93,5 +93,27 @@ export default class UserService extends Service {
             throw new ApiError(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, undefined);
         }
         return ctx.model.Role.create(payload);
+    }
+
+    async sysAvatars() {
+        const baseDir = this.ctx.app.baseDir;
+        const sysAvatarFolder = baseDir + '/app/public/uploads/avatar';
+        const avatarArray: any[] = [];
+        const folders = fs.readdirSync(sysAvatarFolder);
+        for (const f of folders){
+            const perFolder = sysAvatarFolder + '/' + f;
+            const files = fs.readdirSync(perFolder);
+
+            for (let i = 0; i < files.length; i++) {
+                files[i] = '/public/uploads/avatar/' + f + '/' + files[i];
+            }
+
+            const fObj = {
+                name: f,
+                imgs: files,
+            };
+            avatarArray.push(fObj);
+        }
+        return avatarArray;
     }
 };
