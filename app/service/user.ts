@@ -88,11 +88,43 @@ export default class UserService extends Service {
 
     async create(payload) {
         const {ctx} = this;
-        const roleResult = await this.findByMobile(payload.mobile);
-        if (roleResult) {
+        const userResult = await this.findByMobile(payload.mobile);
+        if (userResult) {
             throw new ApiError(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, undefined);
         }
-        return ctx.model.Role.create(payload);
+        const hash = await ctx.genHash(payload.password, ctx.app.config.bcrypt.saltRounds)
+        payload.password = hash;
+        return ctx.model.User.create(payload);
+    }
+
+    async update(payload) {
+        const {ctx} = this;
+        const userResultId = await this.findById(payload.id);
+        if (!userResultId) {
+            throw new ApiError(ApiErrorNames.USER_ID_NOT_EXIST, undefined);
+        }
+        const userResultMobile = await this.findByMobile(payload.mobile);
+        if (userResultMobile && userResultMobile.id !== payload.id) {
+            throw new ApiError(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, undefined);
+        }
+        if (userResultId.password === payload.password) {
+            // 说明没有改密码 保持不变
+        } else {
+            // 需要重置密码
+            const hash = await ctx.genHash(payload.password, ctx.app.config.bcrypt.saltRounds)
+            payload.password = hash;
+        }
+        return userResultId.update(payload);
+    }
+    async destroy(id) {
+        const userResult = await this.findById(id);
+        if (!userResult) {
+            throw new ApiError(ApiErrorNames.USER_ID_NOT_EXIST, undefined);
+        }
+        if (id === 1) {
+            throw new ApiError(ApiErrorNames.ADMIN_CAN_NOT_DELETE, undefined);
+        }
+        return userResult.update({status: 0});
     }
 
     async sysAvatars() {

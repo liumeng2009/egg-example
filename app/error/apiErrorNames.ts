@@ -7,6 +7,8 @@ export const ApiErrorNames = {
     ROLE_ID_NOT_EXIST: 'roleIdNotExist',
     ROLE_CAN_NOT_DELETE: 'roleCanNotDelete',
     USER_MOBILE_MUST_UNIQUE: 'userMobileMustUnique',
+    USER_ID_NOT_EXIST: 'userIdNotExist',
+    ADMIN_CAN_NOT_DELETE: 'adminCanNotDelete',
 };
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
@@ -17,6 +19,8 @@ ApiErrorMap.set(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, {code: 53303, message: '角
 ApiErrorMap.set(ApiErrorNames.ROLE_ID_NOT_EXIST, {code: 53304, message: '角色信息不存在！'});
 ApiErrorMap.set(ApiErrorNames.ROLE_CAN_NOT_DELETE, {code: 53305, message: '系统管理员角色不可以删除！'});
 ApiErrorMap.set(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, {code: 53306, message: '用户手机号已经存在！'});
+ApiErrorMap.set(ApiErrorNames.USER_ID_NOT_EXIST, {code: 53307, message: '用户信息不存在！'});
+ApiErrorMap.set(ApiErrorNames.ADMIN_CAN_NOT_DELETE, {code: 53308, message: '系统管理员账户不可以删除！'});
 
 export class ErrorTools {
     static getErrorInfo= (error_name) => {

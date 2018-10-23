@@ -21,6 +21,7 @@
     "clean": "ets clean"
   },
   "dependencies": {
+    "await-stream-ready": "^1.0.1",
     "bcryptjs": "^2.4.3",
     "egg": "^2.6.1",
     "egg-bcrypt": "^1.1.0",
@@ -29,7 +30,9 @@
     "egg-scripts": "^2.6.0",
     "egg-sequelize": "^4.1.0",
     "egg-validate": "^2.0.1",
-    "mysql2": "^1.6.1"
+    "image-downloader": "^3.4.1",
+    "mysql2": "^1.6.1",
+    "stream-wormhole": "^1.1.0"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.40",

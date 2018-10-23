@@ -4,6 +4,7 @@ export default class UserController extends Controller {
     public userIndexTransfer;
     public userShowTransfer;
     public userTransfer;
+    public userUpdateTransfer;
     constructor(ctx) {
         super(ctx);
         this.userIndexTransfer = {
@@ -24,6 +25,16 @@ export default class UserController extends Controller {
             avatar: {type: 'string', required: false},
             avatarUseSys: {type: 'enum', values: [1, 0], required: false, default: 1},
         };
+        this.userUpdateTransfer = {
+            id: {type: 'number', required: true, convertType: 'int'},
+            mobile: {type: 'string', required: true},
+            realname: {type: 'string', required: false},
+            password: {type: 'string', required: true},
+            age: {type: 'number', required: false, convertType: 'int'},
+            roleId: {type: 'number', required: false, convertType: 'int'},
+            avatar: {type: 'string', required: false},
+            avatarUseSys: {type: 'enum', values: [1, 0], required: false, default: 1},
+        };
     }
     async index() {
         const {ctx, service} = this;
@@ -36,12 +47,11 @@ export default class UserController extends Controller {
                     // @ts-ignore
                     roleArray.push(parseInt(arr.toString(), 10));
                 }catch {
-
+                    console.debug('type error in roleIdList');
                 }
             }
         }
         payload.roles = roleArray;
-        console.log(payload);
         ctx.validate(this.userIndexTransfer, payload);
         const res = await service.user.index(payload);
         await ctx.helper.success(ctx, res, undefined);
@@ -60,6 +70,20 @@ export default class UserController extends Controller {
         ctx.validate(this.userTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.user.create(payload);
+        await ctx.helper.success(ctx, res, '');
+    }
+    async update() {
+        const {ctx, service} = this;
+        ctx.validate(this.userUpdateTransfer, ctx.request.body);
+        const payload = ctx.request.body || {};
+        const res = await service.user.update(payload);
+        await ctx.helper.success(ctx, res, '');
+    }
+    async destroy() {
+        const {ctx, service} = this;
+        ctx.validate(this.userShowTransfer, ctx.params);
+        const payload = ctx.params;
+        const res = await service.user.destroy(payload.id);
         await ctx.helper.success(ctx, res, '');
     }
 
