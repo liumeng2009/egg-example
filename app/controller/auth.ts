@@ -36,15 +36,15 @@ export default class AuthController extends Controller {
         const {ctx, service} = this;
         ctx.validate(this.authTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
-        const res = await service.role.create(payload);
+        const res = await service.authAuthInRole.create(payload);
         await ctx.helper.success(ctx, res, '');
     }
 
     async destroy() {
         const {ctx, service} = this;
-        ctx.validate(this.authShowTransfer, ctx.params);
-        const payload = ctx.params;
-        const res = await service.role.destroy(payload.id);
+        ctx.validate(this.authTransfer, ctx.params);
+        const payload = ctx.params || {};
+        const res = await service.authAuthInRole.destroy(payload);
         await ctx.helper.success(ctx, res, '');
     }
 }

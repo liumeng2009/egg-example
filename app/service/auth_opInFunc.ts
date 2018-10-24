@@ -21,4 +21,11 @@ export default class OpInFuncService extends Service {
             ],
         });
     }
+    async findById(id) {
+        return this.ctx.model.AuthOpInFunc.findOne({
+            where: {
+                id: id,
+            },
+        });
+    }
 }

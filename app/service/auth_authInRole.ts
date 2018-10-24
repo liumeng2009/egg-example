@@ -12,7 +12,6 @@ export default class AuthInRoleService extends Service {
         OpInFuncModel.belongsTo(AuthOperateModel, {foreignKey: 'opId'});
         OpInFuncModel.belongsTo(AuthFunctionModel, {foreignKey: 'funcId'});
         RoleModel.hasMany(AuthInRoleModel, {foreignKey: 'roleId'});
-        // AuthInRoleModel.belongsTo(RoleModel, {foreignKey: 'roleId'});
         AuthInRoleModel.belongsTo(OpInFuncModel, {foreignKey: 'authId'});
         return RoleModel.findOne ({
             where: {
@@ -37,19 +36,6 @@ export default class AuthInRoleService extends Service {
                 },
             ],
         });
-/*        return AuthInRoleModel.findAll({
-            include: [
-                {
-                    model: RoleModel,
-                    where: {
-                        id: roleId,
-                    },
-                },
-                {
-                    model: OpInFuncModel,
-                },
-            ],
-        });*/
     }
     // 数据结构规整为webapp需要的格式
     async clientUse(roleId) {
@@ -60,6 +46,7 @@ export default class AuthInRoleService extends Service {
         }
         const allRes = await this.service.authOpInFunc.index();
         const auths = roleRes.auth_authInRoles;
+        console.log('角色拥有的功能是：' + JSON.stringify(auths));
         // 规整allRes 第一层功能项
         for (const res of allRes) {
             if (res.class === 0) {
@@ -118,10 +105,51 @@ export default class AuthInRoleService extends Service {
     }
     findAuthInRole(id, auths) {
         for (const auth of auths) {
-            if (auth.id === id) {
+            if (auth.auth_opInFunc.id === id) {
                 return true;
             }
         }
         return false;
+    }
+    async show(roleId, authId) {
+        const {ctx} = this;
+        return await ctx.model.AuthAuthInRole.findOne({
+            where: {
+                roleId: roleId,
+                authId: authId,
+            },
+        });
+    }
+    async create(payload) {
+        const {ctx, service} = this;
+        const roleResult = await service.role.findById(payload.roleId);
+        if (!roleResult) {
+            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
+        }
+        const opInfuncResult = await service.authOpInFunc.findById(payload.authId);
+        if (!opInfuncResult) {
+            throw new ApiError(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, undefined);
+        }
+        const authResult = await this.show(payload.roleId, payload.authId);
+        if (authResult) {
+            throw new ApiError(ApiErrorNames.AUTH_EXIST, undefined);
+        }
+        return ctx.model.AuthAuthInRole.create(payload);
+    }
+    async destroy(payload) {
+        const {service} = this;
+        const roleResult = await service.role.findById(payload.roleId);
+        if (!roleResult) {
+            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
+        }
+        const opInfuncResult = await service.authOpInFunc.findById(payload.authId);
+        if (!opInfuncResult) {
+            throw new ApiError(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, undefined);
+        }
+        const authResult = await this.show(payload.roleId, payload.authId);
+        if (authResult) {
+            throw new ApiError(ApiErrorNames.AUTH_EXIST, undefined);
+        }
+        return authResult.destroy();
     }
 }

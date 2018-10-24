@@ -9,6 +9,8 @@ export const ApiErrorNames = {
     USER_MOBILE_MUST_UNIQUE: 'userMobileMustUnique',
     USER_ID_NOT_EXIST: 'userIdNotExist',
     ADMIN_CAN_NOT_DELETE: 'adminCanNotDelete',
+    AUTH_EXIST: 'authExist',
+    OP_IN_FUNC_NOT_EXIST: 'opInFuncNotExist',
 };
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
@@ -21,6 +23,8 @@ ApiErrorMap.set(ApiErrorNames.ROLE_CAN_NOT_DELETE, {code: 53305, message: '系�
 ApiErrorMap.set(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, {code: 53306, message: '用户手机号已经存在！'});
 ApiErrorMap.set(ApiErrorNames.USER_ID_NOT_EXIST, {code: 53307, message: '用户信息不存在！'});
 ApiErrorMap.set(ApiErrorNames.ADMIN_CAN_NOT_DELETE, {code: 53308, message: '系统管理员账户不可以删除！'});
+ApiErrorMap.set(ApiErrorNames.AUTH_EXIST, {code: 53309, message: '此权限已拥有，不需要重复添加了！'});
+ApiErrorMap.set(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, {code: 53310, message: '功能项不存在！'});
 
 export class ErrorTools {
     static getErrorInfo= (error_name) => {
