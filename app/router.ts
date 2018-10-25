@@ -24,6 +24,7 @@ export default (app: Application) => {
   router.put('/api/role', controller.role.update);
   router.delete('/api/role/:id', controller.role.destroy);
 
+  router.post('/api/checkauth', controller.auth.check);
   router.get('/api/auth/:roleId', controller.auth.index);
   router.post('/api/auth', controller.auth.create);
   router.delete('/api/auth/:roleId/:authId', controller.auth.destroy);

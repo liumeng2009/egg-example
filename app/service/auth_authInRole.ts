@@ -46,7 +46,6 @@ export default class AuthInRoleService extends Service {
         }
         const allRes = await this.service.authOpInFunc.index();
         const auths = roleRes.auth_authInRoles;
-        console.log('角色拥有的功能是：' + JSON.stringify(auths));
         // 规整allRes 第一层功能项
         for (const res of allRes) {
             if (res.class === 0) {
@@ -138,6 +137,9 @@ export default class AuthInRoleService extends Service {
     }
     async destroy(payload) {
         const {service} = this;
+        if (payload.roleId === 1) {
+            throw new ApiError(ApiErrorNames.ADMIN_AUTH_CAN_NOT_DELETE, undefined);
+        }
         const roleResult = await service.role.findById(payload.roleId);
         if (!roleResult) {
             throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
@@ -147,9 +149,82 @@ export default class AuthInRoleService extends Service {
             throw new ApiError(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, undefined);
         }
         const authResult = await this.show(payload.roleId, payload.authId);
-        if (authResult) {
-            throw new ApiError(ApiErrorNames.AUTH_EXIST, undefined);
+        if (!authResult) {
+            throw new ApiError(ApiErrorNames.AUTH_NOT_EXIST, undefined);
         }
         return authResult.destroy();
+    }
+    async check(func, op, token, device) {
+        console.log('走这里');
+        const { ctx } = this;
+        const AuthInRoleModel = ctx.model.AuthAuthInRole;
+        const OpInFuncModel = ctx.model.AuthOpInFunc;
+        AuthInRoleModel.belongsTo(OpInFuncModel, {foreignKey: 'authId'});
+        const FuncModel = ctx.model.AuthFunction;
+        const OperateModel = ctx.model.AuthOperate;
+        OpInFuncModel.belongsTo(FuncModel, {foreignKey: 'funcId'});
+        OpInFuncModel.belongsTo(OperateModel, {foreignKey: 'opId'});
+        const RoleModel = ctx.model.Role;
+        AuthInRoleModel.belongsTo(RoleModel, {foreignKey: 'roleId'});
+        const UserModel = ctx.model.User;
+        // UserModel.belongsTo(RoleModel, {foreignKey: 'roleId'});
+        RoleModel.hasMany(UserModel, {foreignKey: 'roleId'});
+        let userSelect;
+        if (device && device === 'webapp') {
+            userSelect = {
+                status: 1,
+                webapptoken: token,
+            };
+        } else {
+            userSelect = {
+                status: 1,
+                token: token,
+            };
+        }
+        // 先验证token
+/*        const userResult = await UserModel.findOne({
+            where: userSelect,
+        });
+        console.log('检测权限' + userResult);
+        if (!userResult) {
+           throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, undefined);
+        }*/
+        // 再验证权限
+        const authResult = await AuthInRoleModel.findAll({
+            include: [
+                {
+                    model: OpInFuncModel,
+                    include: [
+                        {
+                            model: FuncModel,
+                            where: {
+                                code: func,
+                            },
+                        },
+                        {
+                            model: OperateModel,
+                            where: {
+                                code: op,
+                            },
+                        },
+                    ],
+                },
+                {
+                    model: RoleModel,
+                    include: [
+                        {
+                            model: UserModel,
+                            where: userSelect,
+                        },
+                    ],
+                },
+            ],
+        });
+        if (authResult) {
+            console.log(authResult);
+            return authResult;
+        } else {
+            throw new ApiError(ApiErrorNames.NO_AUTH, undefined);
+        }
     }
 }

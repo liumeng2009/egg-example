@@ -38,6 +38,8 @@ export default class UserController extends Controller {
     }
     async index() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device);
         const payload = ctx.query;
         const roleArray = [];
         if (ctx.query.roles) {
@@ -59,6 +61,8 @@ export default class UserController extends Controller {
 
     async show() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.userShowTransfer, ctx.params);
         const payload = ctx.params;
         const res = await service.user.findById(payload.id);
@@ -67,6 +71,8 @@ export default class UserController extends Controller {
 
     async create() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('user', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.userTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.user.create(payload);
@@ -74,6 +80,8 @@ export default class UserController extends Controller {
     }
     async update() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('user', 'edit', ctx.request.headers.authorization, device);
         ctx.validate(this.userUpdateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.user.update(payload);
@@ -81,6 +89,8 @@ export default class UserController extends Controller {
     }
     async destroy() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('user', 'delete', ctx.request.headers.authorization, device);
         ctx.validate(this.userShowTransfer, ctx.params);
         const payload = ctx.params;
         const res = await service.user.destroy(payload.id);
@@ -89,6 +99,8 @@ export default class UserController extends Controller {
 
     async sysAvatar() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('user', 'edit', ctx.request.headers.authorization, device);
         const res = await service.user.sysAvatars();
         await ctx.helper.success(ctx, res, undefined);
     }

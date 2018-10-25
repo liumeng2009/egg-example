@@ -1,4 +1,6 @@
 import {Controller} from 'egg';
+import {ApiError} from "../error/apiError";
+import {ApiErrorNames} from "../error/apiErrorNames";
 const fs = require('fs');
 const path = require('path');
 const awaitWriteStream = require('await-stream-ready').write;
@@ -16,17 +18,9 @@ export default class UploadController extends Controller {
         // 要通过 ctx.getFileStream 便捷的获取到用户上传的文件，需要满足两个条件：
         // 只支持上传一个文件。
         // 上传文件必须在所有其他的 fields 后面，否则在拿到文件流时可能还获取不到 fields。
-        const stream = await ctx.getFileStream()
+        const stream = await ctx.getFileStream();
         // 所有表单字段都能通过 `stream.fields` 获取到
         const filename = path.basename(stream.filename); // 文件名称
-        // const extname = path.extname(stream.filename).toLowerCase(); // 文件扩展名称
-        // 组装参数 model
-        // const attachment = new this.ctx.model.Attachment
-        // attachment.extname = extname
-        // attachment.filename = filename
-        // attachment.url = `/uploads/${attachment._id.toString()}${extname}`
-        // 组装参数 stream
-        // 建立日期文件夹
         const date = new Date();
         const folderName = (date.getFullYear()).toString() +
             ((date.getMonth() + 1) > 9 ? (date.getMonth() + 1).toString() : ('0' + (date.getMonth() + 1)))
@@ -34,15 +28,12 @@ export default class UploadController extends Controller {
         const folder = path.join(this.config.baseDir, 'app/public/uploads', folderName);
 
         if (fs.existsSync(folder)) {
-            console.log('文件夹已存在');
+            throw new ApiError(ApiErrorNames.NO_AUTH, undefined);
         } else {
-            console.log(123);
-            const result = fs.mkdirSync(folder)
-            console.log(result);
+            fs.mkdirSync(folder);
         }
 
         const timeStamp = date.getTime();
-        // let target=fs.createWriteStream(targetPath);
         const target = path.join(folder, timeStamp + '-' + filename )
         const writeStream = fs.createWriteStream(target)
         // 文件处理，上传到云存储等等

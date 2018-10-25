@@ -11,6 +11,9 @@ export const ApiErrorNames = {
     ADMIN_CAN_NOT_DELETE: 'adminCanNotDelete',
     AUTH_EXIST: 'authExist',
     OP_IN_FUNC_NOT_EXIST: 'opInFuncNotExist',
+    ADMIN_AUTH_CAN_NOT_DELETE: 'adminAuthCanNOtDelete',
+    NO_AUTH: 'noAuth',
+    AUTH_NOT_EXIST: 'authNotExist',
 };
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
@@ -25,6 +28,9 @@ ApiErrorMap.set(ApiErrorNames.USER_ID_NOT_EXIST, {code: 53307, message: '用户�
 ApiErrorMap.set(ApiErrorNames.ADMIN_CAN_NOT_DELETE, {code: 53308, message: '系统管理员账户不可以删除！'});
 ApiErrorMap.set(ApiErrorNames.AUTH_EXIST, {code: 53309, message: '此权限已拥有，不需要重复添加了！'});
 ApiErrorMap.set(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, {code: 53310, message: '功能项不存在！'});
+ApiErrorMap.set(ApiErrorNames.ADMIN_AUTH_CAN_NOT_DELETE, {code: 53311, message: '系统管理员角色的权限不可以被删除！'});
+ApiErrorMap.set(ApiErrorNames.NO_AUTH, {code: 53312, message: '无访问权限！'});
+ApiErrorMap.set(ApiErrorNames.AUTH_NOT_EXIST, {code: 53313, message: '要删除的权限不存在！'});
 
 export class ErrorTools {
     static getErrorInfo= (error_name) => {

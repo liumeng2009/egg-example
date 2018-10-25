@@ -147,6 +147,32 @@ module.exports = {
               funcId:roleFunc,
           }
       ],{})
+      const authInRoleFunc = await queryInterface.bulkInsert('auth_functions',[
+          {
+              name: '权限分配',
+              code: 'authInRole',
+              class: 1,
+              belong: authFunc,
+          }
+      ],{})
+      const authInRoleList = await queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:listOp,
+              funcId:authInRoleFunc,
+          }
+      ],{});
+      const authInRoleAdd = await queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:addOp,
+              funcId:authInRoleFunc,
+          }
+      ],{});
+      const authInRoleDelete = await queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:deleteOp,
+              funcId:authInRoleFunc,
+          }
+      ],{});
 
     // 所有权限赋值给admin role
     const roleHasAllAuth =  await queryInterface.bulkInsert('auth_authInRoles',[
@@ -161,6 +187,9 @@ module.exports = {
         {roleId:roleResult, authId:roleAdd,},
         {roleId:roleResult, authId:roleEdit,},
         {roleId:roleResult, authId:roleDelete,},
+        {roleId:roleResult, authId:authInRoleList,},
+        {roleId:roleResult, authId:authInRoleAdd,},
+        {roleId:roleResult, authId:authInRoleDelete,},
     ],{})
   },
 

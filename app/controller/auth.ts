@@ -4,6 +4,7 @@ export default class AuthController extends Controller {
     public authIndexTransfer;
     public authTransfer;
     public authShowTransfer;
+    public authCheckTransfer;
     constructor(ctx) {
         super(ctx);
 
@@ -17,23 +18,28 @@ export default class AuthController extends Controller {
         this.authShowTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
         };
+        this.authCheckTransfer = {
+            token: {type: 'string', required: true},
+            device: {type: 'string', required: false},
+            func: {type: 'string', required: true},
+            op: {type: 'string', required: true},
+        };
     }
 
     async index() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('authInRole', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.authIndexTransfer, ctx.params);
         const payload = ctx.params;
         const res = await service.authAuthInRole.clientUse(payload.roleId);
         await ctx.helper.success(ctx, res, undefined);
     }
-    async auth_func_index() {
-        const {ctx, service} = this;
-        const res = await service.authOpInFunc.index();
-        await ctx.helper.success(ctx, res, undefined);
-    }
 
     async create() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('authInRole', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.authTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.authAuthInRole.create(payload);
@@ -42,9 +48,31 @@ export default class AuthController extends Controller {
 
     async destroy() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('authInRole', 'delete', ctx.request.headers.authorization, device);
         ctx.validate(this.authTransfer, ctx.params);
         const payload = ctx.params || {};
         const res = await service.authAuthInRole.destroy(payload);
         await ctx.helper.success(ctx, res, '');
+    }
+
+    async check() {
+        console.log('go here');
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        const token = ctx.request.headers.authorization;
+        const func = ctx.request.body.func;
+        const op = ctx.request.body.op;
+        const payload = {
+            token: token,
+            device: device,
+            func: func,
+            op: op,
+        }
+        console.log(payload);
+        ctx.validate(this.authCheckTransfer, payload);
+        const res = await service.authAuthInRole.check(func, op, token, device);
+        console.log('res是：' + JSON.stringify(res));
+        await ctx.helper.success(ctx, res, undefined);
     }
 }
