@@ -29,7 +29,8 @@ export default class UserAccessController extends Controller {
     async checkToken() {
         const {ctx, service} = this;
         const token = ctx.request.headers.authorization;
-        const jwtResult = await service.userAccess.checkToken(token);
+        const device = ctx.query.device;
+        const jwtResult = await service.userAccess.checkToken(token, device);
         await ctx.helper.success(ctx, jwtResult, undefined);
     }
 }

@@ -22,18 +22,72 @@ export default class UserService extends Service {
         });
     }
 
-    async findByTokenFull(token) {
+    async findByToken(token, device) {
+        const userModel = this.ctx.model.User;
+        let userSelect;
+        if (device && device === 'webapp') {
+            userSelect = {
+                status: 1,
+                webapptoken: token,
+            };
+        } else {
+            userSelect = {
+                status: 1,
+                token: token,
+            };
+        }
+        return userModel.findOne({
+            where: userSelect,
+        });
+    }
+
+    async findByTokenFull(token, device) {
         const userModel = this.ctx.model.User;
         const roleModel = this.ctx.model.Role;
+        const AuthInRoleModel = this.ctx.model.AuthAuthInRole;
+        const OpInFuncModel = this.ctx.model.AuthOpInFunc;
+        const FunctionModel = this.ctx.model.AuthFunction;
+        const OperateModel = this.ctx.model.AuthOperate;
         userModel.belongsTo(roleModel, {foreignKey : 'roleId'});
-        return this.ctx.model.User.findOne({
-            where: {
-                token: token,
+        roleModel.hasMany(AuthInRoleModel, {foreignKey: 'roleId'});
+        AuthInRoleModel.belongsTo(OpInFuncModel, {foreignKey: 'authId'});
+        OpInFuncModel.belongsTo(FunctionModel, {foreignKey: 'funcId'});
+        OpInFuncModel.belongsTo(OperateModel, {foreignKey: 'opId'});
+        let userSelect;
+        if (device && device === 'webapp') {
+            userSelect = {
                 status: 1,
-            },
+                webapptoken: token,
+            };
+        } else {
+            userSelect = {
+                status: 1,
+                token: token,
+            };
+        }
+        return userModel.findOne({
+            where: userSelect,
             include : [
                 {
                     model : roleModel,
+                    include: [
+                        {
+                            model: AuthInRoleModel,
+                            include: [
+                                {
+                                    model: OpInFuncModel,
+                                    include: [
+                                        {
+                                            model: FunctionModel,
+                                        },
+                                        {
+                                            model: OperateModel,
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
                 },
             ],
         });

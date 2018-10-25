@@ -181,15 +181,7 @@ export default class AuthInRoleService extends Service {
                 token: token,
             };
         }
-        // 先验证token
-/*        const userResult = await UserModel.findOne({
-            where: userSelect,
-        });
-        console.log('检测权限' + userResult);
-        if (!userResult) {
-           throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, undefined);
-        }*/
-        // 再验证权限
+        // 验证权限
         const authResult = await AuthInRoleModel.findAll({
             include: [
                 {
@@ -211,6 +203,7 @@ export default class AuthInRoleService extends Service {
                 },
                 {
                     model: RoleModel,
+                    required: true,
                     include: [
                         {
                             model: UserModel,
@@ -220,8 +213,7 @@ export default class AuthInRoleService extends Service {
                 },
             ],
         });
-        if (authResult) {
-            console.log(authResult);
+        if (authResult.length > 0) {
             return authResult;
         } else {
             throw new ApiError(ApiErrorNames.NO_AUTH, undefined);
