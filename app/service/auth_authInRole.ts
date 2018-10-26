@@ -186,6 +186,7 @@ export default class AuthInRoleService extends Service {
             include: [
                 {
                     model: OpInFuncModel,
+                    required: true,
                     include: [
                         {
                             model: FuncModel,
@@ -214,6 +215,7 @@ export default class AuthInRoleService extends Service {
             ],
         });
         if (authResult.length > 0) {
+            console.log(JSON.stringify(authResult));
             return authResult;
         } else {
             throw new ApiError(ApiErrorNames.NO_AUTH, undefined);

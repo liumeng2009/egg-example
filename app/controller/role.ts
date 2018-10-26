@@ -29,6 +29,9 @@ export default class RoleController extends Controller {
 
     async index() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('role', 'list', ctx.request.headers.authorization, device);
+        console.log('可以访问role list');
         ctx.validate(this.roleIndexTransfer, ctx.query);
         const payload = ctx.query;
         const res = await service.role.index(payload);
