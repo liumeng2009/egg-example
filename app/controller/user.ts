@@ -100,7 +100,7 @@ export default class UserController extends Controller {
     async sysAvatar() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('user', 'edit', ctx.request.headers.authorization, device);
+        await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device);
         const res = await service.user.sysAvatars();
         await ctx.helper.success(ctx, res, undefined);
     }
