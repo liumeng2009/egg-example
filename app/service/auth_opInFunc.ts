@@ -21,7 +21,7 @@ export default class OpInFuncService extends Service {
             ],
             order: [
                 ['sort', 'ASC'],
-                ['`auth_opInFuncs.auth_operate`.id', 'ASC'],
+                [OpInFuncModel, AuthOperateModel, 'id', 'ASC'],
             ],
         });
     }

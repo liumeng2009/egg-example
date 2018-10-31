@@ -3,6 +3,7 @@ import {Controller} from 'egg';
 export default class RoleController extends Controller {
     public roleIndexTransfer;
     public roleTransfer;
+    public roleAuthsTransfer;
     public roleShowTransfer;
     public roleDeleteTransfer;
     public roleUpdateTransfer;
@@ -17,6 +18,9 @@ export default class RoleController extends Controller {
         this.roleTransfer = {
             name: {type: 'string', required: true},
             remark: {type: 'string', required: false},
+        };
+        this.roleAuthsTransfer = {
+            auths: {type: 'array', required: false, itemType: 'int' },
         };
         this.roleShowTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
@@ -51,7 +55,8 @@ export default class RoleController extends Controller {
 
     async create() {
         const {ctx, service} = this;
-        ctx.validate(this.roleTransfer, ctx.request.body);
+        ctx.validate(this.roleTransfer, ctx.request.body.role);
+        ctx.validate(this.roleAuthsTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.role.create(payload);
         await ctx.helper.success(ctx, res, '');

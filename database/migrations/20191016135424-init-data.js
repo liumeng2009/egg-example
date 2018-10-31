@@ -23,6 +23,12 @@ module.exports = {
     ])
 
     // 初始化权限操作
+      const menuOp = await queryInterface.bulkInsert('auth_operates',[
+          {
+              name: '显示',
+              code: 'menu',
+          }
+      ],{});
     const listOp = await queryInterface.bulkInsert('auth_operates',[
       {
           name: '查看',
@@ -47,12 +53,7 @@ module.exports = {
           code: 'delete',
       }
     ],{})
-    const menuOp = await queryInterface.bulkInsert('auth_operates',[
-      {
-          name: '显示',
-          code: 'menu',
-      }
-    ],{})
+
 
     //初始化权限
     const authFunc = await queryInterface.bulkInsert('auth_functions',[

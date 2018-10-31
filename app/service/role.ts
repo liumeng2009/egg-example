@@ -6,7 +6,7 @@ export default class RoleService extends Service {
     async index(payload) {
         let {page, pagesize} = payload;
         const {searchkey} = payload;
-        let whereOBj = {}
+        let whereOBj = {};
         if (searchkey) {
             whereOBj = {status: 1, name: {$regexp: searchkey}};
         } else {
@@ -51,11 +51,30 @@ export default class RoleService extends Service {
 
     async create(payload) {
         const {ctx} = this;
-        const roleResult = await this.findByName(payload.name);
+        if (!payload.role.name || payload.role.name === '') {
+            throw new ApiError(ApiErrorNames.ROLE_NAME_CAN_NOT_NULL, undefined);
+        }
+        const roleResult = await this.findByName(payload.role.name);
         if (roleResult) {
             throw new ApiError(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, undefined);
         }
-        return ctx.model.Role.create(payload);
+
+        const t = await ctx.model.transaction();
+        // return ctx.model.Role.create(payload.role);
+        try {
+            const roleResult = await ctx.model.Role.create(payload.role, {transaction: t});
+            const authArray: any[] = [];
+            for (const auth of payload.auths) {
+                const authPer = {authId: auth, roleId: roleResult.id};
+                authArray.push(authPer);
+            }
+            console.log(authArray);
+            await ctx.model.AuthAuthInRole.bulkCreate(authArray, {transaction: t});
+            return await t.commit();
+        } catch (err) {
+            t.rollback();
+            throw new ApiError(ApiErrorNames.ROLE_SAVE_FAILED, [err.message]);
+        }
     }
 
     async update(payload) {
