@@ -70,14 +70,28 @@ export default class RoleService extends Service {
         return roleResultId.update(payload);
     }
 
-    async destroy(id) {
-        const roleResult = await this.findById(id);
-        if (!roleResult) {
-            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
+    async destroy(payload) {
+        const {ctx} = this;
+        const RoleModel = ctx.model.Role;
+        let whereStr = {};
+        if (payload instanceof Array && payload.length > 0) {
+            for (const idObj of payload ) {
+                if (idObj === 1) {
+                    throw new ApiError(ApiErrorNames.ROLE_CAN_NOT_DELETE, undefined);
+                }
+            }
+            whereStr = {
+                id: {$or : payload},
+                status: 1,
+            };
+        } else {
+            whereStr = {
+                id: 0,
+                status: 1,
+            };
         }
-        if (id === 1) {
-            throw new ApiError(ApiErrorNames.ROLE_CAN_NOT_DELETE, undefined);
-        }
-        return roleResult.update({status: 0});
+        return RoleModel.update({status: 0}, {
+            where: whereStr,
+        });
     }
 }

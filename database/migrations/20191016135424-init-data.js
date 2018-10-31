@@ -49,7 +49,7 @@ module.exports = {
     ],{})
     const menuOp = await queryInterface.bulkInsert('auth_operates',[
       {
-          name: '菜单可见',
+          name: '显示',
           code: 'menu',
       }
     ],{})
@@ -61,6 +61,7 @@ module.exports = {
             code: 'auth',
             class: 0,
             belong: null,
+            sort: 1,
         }
     ],{})
     const authMenu = await queryInterface.bulkInsert('auth_opInFuncs',[
@@ -77,6 +78,7 @@ module.exports = {
             code: 'user',
             class: 1,
             belong: authFunc,
+            sort: 2,
         }
     ],{})
       const userMenu = await queryInterface.bulkInsert('auth_opInFuncs',[
@@ -115,6 +117,7 @@ module.exports = {
           code: 'role',
           class: 1,
           belong: authFunc,
+          sort: 3,
       }
     ],{})
       const roleMenu = await queryInterface.bulkInsert('auth_opInFuncs',[
@@ -153,6 +156,7 @@ module.exports = {
               code: 'authInRole',
               class: 1,
               belong: authFunc,
+              sort: 4,
           }
       ],{})
       const authInRoleList = await queryInterface.bulkInsert('auth_opInFuncs',[

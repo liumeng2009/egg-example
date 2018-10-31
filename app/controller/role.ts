@@ -4,6 +4,7 @@ export default class RoleController extends Controller {
     public roleIndexTransfer;
     public roleTransfer;
     public roleShowTransfer;
+    public roleDeleteTransfer;
     public roleUpdateTransfer;
     constructor(ctx) {
         super(ctx);
@@ -20,6 +21,9 @@ export default class RoleController extends Controller {
         this.roleShowTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
         };
+        this.roleDeleteTransfer = {
+            ids: {type: 'array', required: true, itemType: 'int'},
+        };
         this.roleUpdateTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
             name: {type: 'string', required: true},
@@ -31,7 +35,6 @@ export default class RoleController extends Controller {
         const {ctx, service} = this;
         const device = ctx.query.device;
         await service.authAuthInRole.check('role', 'list', ctx.request.headers.authorization, device);
-        console.log('可以访问role list');
         ctx.validate(this.roleIndexTransfer, ctx.query);
         const payload = ctx.query;
         const res = await service.role.index(payload);
@@ -64,9 +67,10 @@ export default class RoleController extends Controller {
 
     async destroy() {
         const {ctx, service} = this;
-        ctx.validate(this.roleShowTransfer, ctx.params);
-        const payload = ctx.params;
-        const res = await service.role.destroy(payload.id);
+        console.log(ctx.request.body);
+        ctx.validate(this.roleDeleteTransfer, ctx.request.body);
+        const payload = ctx.request.body.ids;
+        const res = await service.role.destroy(payload);
         await ctx.helper.success(ctx, res, '');
     }
 }

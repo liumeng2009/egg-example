@@ -57,7 +57,6 @@ export default class AuthController extends Controller {
     }
 
     async check() {
-        console.log('go here');
         const {ctx, service} = this;
         const device = ctx.query.device;
         const token = ctx.request.headers.authorization;

@@ -19,10 +19,11 @@ export default (app: Application) => {
   router.post('/api/upload', controller.upload.create);
 
   router.get('/api/role', controller.role.index);
+  router.post('/api/role/delete', controller.role.destroy);
   router.get('/api/role/:id', controller.role.show);
   router.post('/api/role', controller.role.create);
   router.put('/api/role', controller.role.update);
-  router.delete('/api/role/:id', controller.role.destroy);
+  router.put('/api/role/delete', controller.role.destroy);
 
   router.post('/api/checkauth', controller.auth.check);
   router.get('/api/auth/:roleId', controller.auth.index);

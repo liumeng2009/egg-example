@@ -41,34 +41,30 @@ export default class AuthInRoleService extends Service {
     async clientUse(roleId) {
         const result: any[] = [];
         const roleRes = await this.service.authAuthInRole.index(roleId);
-        if (!roleRes) {
-            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
-        }
+
         const allRes = await this.service.authOpInFunc.index();
-        const auths = roleRes.auth_authInRoles;
+        const auths = roleRes ? roleRes.auth_authInRoles : [];
         // 规整allRes 第一层功能项
         for (const res of allRes) {
-            if (res.class === 0) {
-                const ops: any[] = [];
-                for (const ro of res.auth_opInFuncs) {
-                    const op = {
-                        label: ro.auth_operate.name,
-                        value: ro.id,
-                        checked: this.findAuthInRole(ro.id, auths),
-                    };
-                    ops.push(op);
-                }
-
-                const r = {
-                    id: res.id,
-                    name: res.name,
-                    ops: ops,
-                    children: [],
+            const ops: any[] = [];
+            for (const ro of res.auth_opInFuncs) {
+                const op = {
+                    label: ro.auth_operate.name,
+                    value: ro.id,
+                    checked: this.findAuthInRole(ro.id, auths),
                 };
-                result.push(r);
+                ops.push(op);
             }
+
+            const r = {
+                id: res.id,
+                name: res.name,
+                level: res.level,
+                ops: ops,
+            };
+            result.push(r);
         }
-        // 第二层功能项
+/*        // 第二层功能项
         for (const res of allRes) {
             if (res.class === 1) {
                 const belong = res.belong;
@@ -91,17 +87,17 @@ export default class AuthInRoleService extends Service {
                     parent.children.push(rChild);
                 }
             }
-        }
+        }*/
         return result;
     }
-    findFunctionParent(belong, res) {
+/*    findFunctionParent(belong, res) {
         for (const r of res) {
             if (belong === r.id) {
                 return r;
             }
         }
         return false;
-    }
+    }*/
     findAuthInRole(id, auths) {
         for (const auth of auths) {
             if (auth.auth_opInFunc.id === id) {
