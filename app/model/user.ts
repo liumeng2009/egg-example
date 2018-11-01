@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = (app) => {
-    const {STRING, INTEGER, DATE} = app.Sequelize;
+    const {STRING, INTEGER, DATE, BOOLEAN} = app.Sequelize;
 
     const User = app.model.define('user', {
         id: {type: INTEGER, primaryKey: true, autoIncrement: true},
@@ -12,6 +12,7 @@ module.exports = (app) => {
         roleId: INTEGER,
         avatar: STRING(200),
         avatarUseSys: {type: INTEGER},
+        isAdmin: BOOLEAN,
         status: INTEGER,
         token: STRING(500),
         webappToken: STRING(500),

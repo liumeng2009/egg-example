@@ -18,6 +18,7 @@ export const ApiErrorNames = {
     AUTH_NOT_EXIST: 'authNotExist',
     AUTH_FUNCTION_NOT_EXIST: 'authFunctionNotExist',
     AUTH_OPERATE_NOT_EXIST: 'authOperateNotExist',
+    USER_CAN_NOT_LOGIN_ADMIN: 'userCanNotLoginAdmin',
 };
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
@@ -39,6 +40,7 @@ ApiErrorMap.set(ApiErrorNames.NO_AUTH, {code: 53314, message: '当前登录账�
 ApiErrorMap.set(ApiErrorNames.AUTH_NOT_EXIST, {code: 53315, message: '要删除的权限不存在！'});
 ApiErrorMap.set(ApiErrorNames.AUTH_FUNCTION_NOT_EXIST, {code: 53316, message: '权限的功能项参数不存在！'});
 ApiErrorMap.set(ApiErrorNames.AUTH_OPERATE_NOT_EXIST, {code: 53317, message: '权限的操作参数不存在！'});
+ApiErrorMap.set(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN, {code: 53318, message: '您的账户不能登录管理后台！'});
 
 export class ErrorTools {
     static getErrorInfo= (error_name) => {

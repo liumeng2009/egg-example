@@ -9,10 +9,10 @@ export default (app: Application) => {
   router.get('/api/user/checktoken', controller.userAccess.checkToken);
 
   router.get('/api/user', controller.user.index);
+  router.post('/api/user/delete', controller.user.destroy);
   router.post('/api/user', controller.user.create);
   router.put('/api/user', controller.user.update);
   router.get('/api/user/:id', controller.user.show);
-  router.delete('/api/user/:id', controller.user.destroy);
 
   router.get('/api/avatar', controller.user.sysAvatar);
 
@@ -23,7 +23,6 @@ export default (app: Application) => {
   router.get('/api/role/:id', controller.role.show);
   router.post('/api/role', controller.role.create);
   router.put('/api/role', controller.role.update);
-  router.put('/api/role/delete', controller.role.destroy);
 
   router.post('/api/checkauth', controller.auth.check);
   router.get('/api/auth/:roleId', controller.auth.index);

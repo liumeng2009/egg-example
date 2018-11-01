@@ -19,6 +19,7 @@ module.exports = {
             realname:'刘孟',
             password:hash,
             roleId:roleResult,
+            isAdmin:true,
         }
     ])
 

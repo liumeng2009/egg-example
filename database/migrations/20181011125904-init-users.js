@@ -9,7 +9,7 @@ module.exports = {
       Example:
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
-    const {INTEGER,DATE,STRING}=Sequelize;
+    const {INTEGER,DATE,STRING,BOOLEAN}=Sequelize;
 
     //const adminPassword='admin';
     // 加密密码
@@ -26,6 +26,7 @@ module.exports = {
         roleId:INTEGER,
         avatar:STRING(200),
         avatarUseSys:{type:INTEGER,defaultValue:1},
+        isAdmin:{type:BOOLEAN,defaultValue:false},
         status:{type:INTEGER,defaultValue:1},
         token:{type:STRING(500)},
         webappToken:{type:STRING(500)},

@@ -12,6 +12,9 @@ module.exports = (app) => {
             if (!userResult) {
                 throw new ApiError(ApiErrorNames.USERNAME_NOT_EXIST, undefined);
             }
+            if (!userResult.isAdmin) {
+                throw new ApiError(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN, undefined);
+            }
             const verifyPsw = await ctx.compare(user.password, userResult.password);
             if (!verifyPsw) {
                 throw new ApiError(ApiErrorNames.PASSWORD_ERROR, undefined);
