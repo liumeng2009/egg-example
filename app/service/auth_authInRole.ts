@@ -64,40 +64,8 @@ export default class AuthInRoleService extends Service {
             };
             result.push(r);
         }
-/*        // 第二层功能项
-        for (const res of allRes) {
-            if (res.class === 1) {
-                const belong = res.belong;
-                const parent = this.findFunctionParent(belong, result);
-                if (parent) {
-                    const opsChild: any[] = [];
-                    for (const ro of res.auth_opInFuncs) {
-                        const op = {
-                            label: ro.auth_operate.name,
-                            value: ro.id,
-                            checked: this.findAuthInRole(ro.id, auths),
-                        };
-                        opsChild.push(op);
-                    }
-                    const rChild = {
-                        id: res.id,
-                        name: res.name,
-                        ops: opsChild,
-                    };
-                    parent.children.push(rChild);
-                }
-            }
-        }*/
         return result;
     }
-/*    findFunctionParent(belong, res) {
-        for (const r of res) {
-            if (belong === r.id) {
-                return r;
-            }
-        }
-        return false;
-    }*/
     findAuthInRole(id, auths) {
         for (const auth of auths) {
             if (auth.auth_opInFunc.id === id) {
@@ -151,8 +119,7 @@ export default class AuthInRoleService extends Service {
         return authResult.destroy();
     }
     async check(func, op, token, device) {
-        console.log('走这里');
-        const { ctx } = this;
+        const { ctx , service} = this;
         const AuthInRoleModel = ctx.model.AuthAuthInRole;
         const OpInFuncModel = ctx.model.AuthOpInFunc;
         AuthInRoleModel.belongsTo(OpInFuncModel, {foreignKey: 'authId'});
@@ -176,6 +143,14 @@ export default class AuthInRoleService extends Service {
                 status: 1,
                 token: token,
             };
+        }
+        const functionResult = await service.authFunction.findByCode(func);
+        if (!functionResult) {
+            throw new ApiError(ApiErrorNames.AUTH_FUNCTION_NOT_EXIST, undefined);
+        }
+        const operateReulst = await service.authOperate.findByCode(op);
+        if (!operateReulst) {
+            throw new ApiError(ApiErrorNames.AUTH_OPERATE_NOT_EXIST, undefined);
         }
         // 验证权限
         const authResult = await AuthInRoleModel.findAll({
@@ -214,7 +189,7 @@ export default class AuthInRoleService extends Service {
             console.log(JSON.stringify(authResult));
             return authResult;
         } else {
-            throw new ApiError(ApiErrorNames.NO_AUTH, undefined);
+            throw new ApiError(ApiErrorNames.NO_AUTH, [functionResult.name + '的' + operateReulst.name + '权限']);
         }
     }
 }

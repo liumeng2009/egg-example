@@ -170,15 +170,29 @@ export default class UserService extends Service {
         }
         return userResultId.update(payload);
     }
-    async destroy(id) {
-        const userResult = await this.findById(id);
-        if (!userResult) {
-            throw new ApiError(ApiErrorNames.USER_ID_NOT_EXIST, undefined);
+    async destroy(payload) {
+        const {ctx} = this;
+        const UserModel = ctx.model.User;
+        let whereStr = {};
+        if (payload instanceof Array && payload.length > 0) {
+            for (const idObj of payload ) {
+                if (idObj === 1) {
+                    throw new ApiError(ApiErrorNames.ADMIN_CAN_NOT_DELETE, undefined);
+                }
+            }
+            whereStr = {
+                id: {$or : payload},
+                status: 1,
+            };
+        } else {
+            whereStr = {
+                id: 0,
+                status: 1,
+            };
         }
-        if (id === 1) {
-            throw new ApiError(ApiErrorNames.ADMIN_CAN_NOT_DELETE, undefined);
-        }
-        return userResult.update({status: 0});
+        return UserModel.update({status: 0}, {
+            where: whereStr,
+        });
     }
 
     async sysAvatars() {

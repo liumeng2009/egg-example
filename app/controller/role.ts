@@ -47,6 +47,8 @@ export default class RoleController extends Controller {
 
     async show() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('role', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.roleShowTransfer, ctx.params);
         const payload = ctx.params;
         const res = await service.role.findById(payload.id);
@@ -55,6 +57,9 @@ export default class RoleController extends Controller {
 
     async create() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('role', 'add', ctx.request.headers.authorization, device);
+        await service.authAuthInRole.check('authInRole', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.roleTransfer, ctx.request.body.role);
         ctx.validate(this.roleAuthsTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
@@ -64,6 +69,8 @@ export default class RoleController extends Controller {
 
     async update() {
         const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('role', 'edit', ctx.request.headers.authorization, device);
         ctx.validate(this.roleUpdateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.role.update(payload);
@@ -72,7 +79,8 @@ export default class RoleController extends Controller {
 
     async destroy() {
         const {ctx, service} = this;
-        console.log(ctx.request.body);
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('role', 'delete', ctx.request.headers.authorization, device);
         ctx.validate(this.roleDeleteTransfer, ctx.request.body);
         const payload = ctx.request.body.ids;
         const res = await service.role.destroy(payload);

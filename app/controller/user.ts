@@ -3,6 +3,7 @@ import {Controller} from 'egg';
 export default class UserController extends Controller {
     public userIndexTransfer;
     public userShowTransfer;
+    public userDeleteTransfer;
     public userTransfer;
     public userUpdateTransfer;
     constructor(ctx) {
@@ -15,6 +16,9 @@ export default class UserController extends Controller {
         };
         this.userShowTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
+        };
+        this.userDeleteTransfer = {
+            ids: {type: 'array', required: true, itemType: 'int'},
         };
         this.userTransfer = {
             mobile: {type: 'string', required: true},
@@ -91,9 +95,9 @@ export default class UserController extends Controller {
         const {ctx, service} = this;
         const device = ctx.query.device;
         await service.authAuthInRole.check('user', 'delete', ctx.request.headers.authorization, device);
-        ctx.validate(this.userShowTransfer, ctx.params);
-        const payload = ctx.params;
-        const res = await service.user.destroy(payload.id);
+        ctx.validate(this.userDeleteTransfer, ctx.request.body);
+        const payload = ctx.request.body.ids;
+        const res = await service.user.destroy(payload);
         await ctx.helper.success(ctx, res, '');
     }
 
