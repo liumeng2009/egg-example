@@ -54,6 +54,12 @@ module.exports = {
           code: 'delete',
       }
     ],{})
+      const auditingOp = await queryInterface.bulkInsert('auth_operates',[
+          {
+              name: '审核',
+              code: 'auditing',
+          }
+      ],{})
 
 
     //初始化权限
@@ -180,6 +186,102 @@ module.exports = {
           }
       ],{});
 
+      const cmsFunc = await queryInterface.bulkInsert('auth_functions',[
+          {
+              name: '网站内容管理',
+              code: 'cms',
+              class: 0,
+              belong: null,
+              sort: 5,
+          }
+      ],{})
+      const cmsMenu = await queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:menuOp,
+              funcId:cmsFunc,
+          }
+      ],{});
+
+      const articleFunc = await queryInterface.bulkInsert('auth_functions',[
+          {
+              name: '内容管理',
+              code: 'article',
+              class: 1,
+              belong: cmsFunc,
+              sort: 6,
+          }
+      ],{})
+      const articleMenu = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:menuOp,
+              funcId:articleFunc,
+          }
+      ],{});
+      const articleList = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:listOp,
+              funcId:articleFunc,
+          }
+      ],{});
+      const articleAdd = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:addOp,
+              funcId:articleFunc,
+          }
+      ],{});
+      const articleEdit = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:editOp,
+              funcId:articleFunc,
+          }
+      ],{});
+      const articleDelete = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:deleteOp,
+              funcId:articleFunc,
+          }
+      ],{});
+      const articleAuditing = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:auditingOp,
+              funcId:articleFunc,
+          }
+      ],{});
+
+      const articleCategoryFunc = await queryInterface.bulkInsert('auth_functions',[
+          {
+              name: '栏目类别',
+              code: 'article_category',
+              class: 1,
+              belong: cmsFunc,
+              sort: 7,
+          }
+      ],{})
+      const articleCategoryMenu = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:menuOp,
+              funcId:articleCategoryFunc,
+          }
+      ],{});
+      const articleCategoryList = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:listOp,
+              funcId:articleCategoryFunc,
+          }
+      ],{});
+      const articleCategoryAdd = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:addOp,
+              funcId:articleCategoryFunc,
+          }
+      ],{});
+      const articleCategoryDelete = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:deleteOp,
+              funcId:articleCategoryFunc,
+          }
+      ],{});
+
     // 所有权限赋值给admin role
     const roleHasAllAuth =  await queryInterface.bulkInsert('auth_authInRoles',[
         {roleId:roleResult, authId:authMenu,},
@@ -196,6 +298,12 @@ module.exports = {
         {roleId:roleResult, authId:authInRoleList,},
         {roleId:roleResult, authId:authInRoleAdd,},
         {roleId:roleResult, authId:authInRoleDelete,},
+        {roleId:roleResult, authId:cmsMenu,},
+        {roleId:roleResult, authId:articleMenu,},
+        {roleId:roleResult, authId:articleList,},
+        {roleId:roleResult, authId:articleAdd,},
+        {roleId:roleResult, authId:articleEdit,},
+        {roleId:roleResult, authId:articleMenu,},
     ],{})
   },
 
