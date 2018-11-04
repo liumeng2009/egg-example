@@ -144,6 +144,7 @@ export default class AuthInRoleService extends Service {
                 token: token,
             };
         }
+        console.log(func + op );
         const functionResult = await service.authFunction.findByCode(func);
         if (!functionResult) {
             throw new ApiError(ApiErrorNames.AUTH_FUNCTION_NOT_EXIST, undefined);

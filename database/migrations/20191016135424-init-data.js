@@ -67,7 +67,7 @@ module.exports = {
         {
             name: '用户权限管理',
             code: 'auth',
-            class: 0,
+            level: 0,
             belong: null,
             sort: 1,
         }
@@ -84,7 +84,7 @@ module.exports = {
         {
             name: '用户管理',
             code: 'user',
-            class: 1,
+            level: 1,
             belong: authFunc,
             sort: 2,
         }
@@ -123,7 +123,7 @@ module.exports = {
       {
           name: '角色管理',
           code: 'role',
-          class: 1,
+          level: 1,
           belong: authFunc,
           sort: 3,
       }
@@ -162,7 +162,7 @@ module.exports = {
           {
               name: '权限分配',
               code: 'authInRole',
-              class: 1,
+              level: 1,
               belong: authFunc,
               sort: 4,
           }
@@ -189,8 +189,8 @@ module.exports = {
       const cmsFunc = await queryInterface.bulkInsert('auth_functions',[
           {
               name: '网站内容管理',
-              code: 'cms',
-              class: 0,
+              code: 'content',
+              level: 0,
               belong: null,
               sort: 5,
           }
@@ -206,7 +206,7 @@ module.exports = {
           {
               name: '内容管理',
               code: 'article',
-              class: 1,
+              level: 1,
               belong: cmsFunc,
               sort: 6,
           }
@@ -251,8 +251,8 @@ module.exports = {
       const articleCategoryFunc = await queryInterface.bulkInsert('auth_functions',[
           {
               name: '栏目类别',
-              code: 'article_category',
-              class: 1,
+              code: 'category',
+              level: 1,
               belong: cmsFunc,
               sort: 7,
           }
@@ -272,6 +272,12 @@ module.exports = {
       const articleCategoryAdd = await  queryInterface.bulkInsert('auth_opInFuncs',[
           {
               opId:addOp,
+              funcId:articleCategoryFunc,
+          }
+      ],{});
+      const articleCategoryEdit = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:editOp,
               funcId:articleCategoryFunc,
           }
       ],{});
@@ -303,7 +309,13 @@ module.exports = {
         {roleId:roleResult, authId:articleList,},
         {roleId:roleResult, authId:articleAdd,},
         {roleId:roleResult, authId:articleEdit,},
-        {roleId:roleResult, authId:articleMenu,},
+        {roleId:roleResult, authId:articleDelete,},
+        {roleId:roleResult, authId:articleAuditing,},
+        {roleId:roleResult, authId:articleCategoryMenu,},
+        {roleId:roleResult, authId:articleCategoryList,},
+        {roleId:roleResult, authId:articleCategoryAdd,},
+        {roleId:roleResult, authId:articleCategoryEdit,},
+        {roleId:roleResult, authId:articleCategoryDelete,},
     ],{})
   },
 

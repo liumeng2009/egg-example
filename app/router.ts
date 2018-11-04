@@ -28,4 +28,10 @@ export default (app: Application) => {
   router.get('/api/auth/:roleId', controller.auth.index);
   router.post('/api/auth', controller.auth.create);
   router.delete('/api/auth/:roleId/:authId', controller.auth.destroy);
+
+  router.get('/api/content/channel', controller.channel.index);
+  router.get('/api/content/channel/:id', controller.channel.show);
+
+  router.get('/api/content/category', controller.articleCategory.index);
+  router.post('/api/content/category', controller.articleCategory.create);
 };

@@ -19,6 +19,9 @@ export const ApiErrorNames = {
     AUTH_FUNCTION_NOT_EXIST: 'authFunctionNotExist',
     AUTH_OPERATE_NOT_EXIST: 'authOperateNotExist',
     USER_CAN_NOT_LOGIN_ADMIN: 'userCanNotLoginAdmin',
+    CHANNEL_NOT_EXIST: 'channelNotExist',
+    CATEGORY_NOT_EXIST: 'categoryNotExist',
+    CATEGORY_SAVE_FAILED: 'categorySaveFailed',
 };
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
@@ -41,6 +44,9 @@ ApiErrorMap.set(ApiErrorNames.AUTH_NOT_EXIST, {code: 53315, message: '要删除�
 ApiErrorMap.set(ApiErrorNames.AUTH_FUNCTION_NOT_EXIST, {code: 53316, message: '权限的功能项参数不存在！'});
 ApiErrorMap.set(ApiErrorNames.AUTH_OPERATE_NOT_EXIST, {code: 53317, message: '权限的操作参数不存在！'});
 ApiErrorMap.set(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN, {code: 53318, message: '您的账户不能登录管理后台！'});
+ApiErrorMap.set(ApiErrorNames.CHANNEL_NOT_EXIST, {code: 53319, message: '频道不存在！'});
+ApiErrorMap.set(ApiErrorNames.CATEGORY_NOT_EXIST, {code: 53320, message: '分类不存在！'});
+ApiErrorMap.set(ApiErrorNames.CATEGORY_SAVE_FAILED, {code: 53321, message: '分类保存失败！原因是：{1}'});
 
 export class ErrorTools {
     static getErrorInfo= (error_name) => {
