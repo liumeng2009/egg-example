@@ -2,6 +2,7 @@
 // Do not modify this file!!!!!!!!!
 
 import 'egg'; // Make sure ts to import egg declaration at first
+import Article from '../../../app/model/article';
 import ArticleCategory from '../../../app/model/article_category';
 import AuthAuthInRole from '../../../app/model/auth_authInRole';
 import AuthFunction from '../../../app/model/auth_function';
@@ -13,6 +14,7 @@ import User from '../../../app/model/user';
 
 declare module 'sequelize' {
   interface Sequelize {
+    Article: ReturnType<typeof Article>;
     ArticleCategory: ReturnType<typeof ArticleCategory>;
     AuthAuthInRole: ReturnType<typeof AuthAuthInRole>;
     AuthFunction: ReturnType<typeof AuthFunction>;

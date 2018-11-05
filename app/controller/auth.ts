@@ -68,10 +68,8 @@ export default class AuthController extends Controller {
             func: func,
             op: op,
         }
-        console.log(payload);
         ctx.validate(this.authCheckTransfer, payload);
         const res = await service.authAuthInRole.check(func, op, token, device);
-        console.log('res是：' + JSON.stringify(res));
         await ctx.helper.success(ctx, res, undefined);
     }
 }
