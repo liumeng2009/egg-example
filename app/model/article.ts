@@ -20,6 +20,8 @@ module.exports = (app) => {
         isHot: {type: BOOLEAN},
         isSlide: {type: BOOLEAN},
         author: {type: INTEGER},
+        auditing: {type: INTEGER},
+        publishAt: {type: DATE},
         createdAt: {type: DATE},
         updatedAt: {type: DATE},
     }, {

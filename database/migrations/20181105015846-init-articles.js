@@ -14,7 +14,7 @@ module.exports = {
           content:{type:TEXT},
           sort:{type:INTEGER,defaultValue:100},
           click:{type:INTEGER,defaultValue: 0},
-          status:{type:INTEGER,defaultValue:1},
+          status:{type:INTEGER,defaultValue:1,comment:'1正常0删除2未审核'},
           isComment:{type:BOOLEAN,defaultValue:true,comment:'是否可以评论'},
           isTop:{type:BOOLEAN,defaultValue:false,comment:'是否置顶'},
           isRed:{type:BOOLEAN,defaultValue:false,comment:'是否推荐'},
