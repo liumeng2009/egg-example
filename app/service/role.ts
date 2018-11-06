@@ -12,12 +12,12 @@ export default class RoleService extends Service {
         } else {
             whereOBj = {status: 1};
         }
-        if (page === 0 && pagesize === 0) {
+/*        if (page === 0 && pagesize === 0) {
             return this.ctx.model.Role.findAndCountAll ({
                 where: whereOBj,
                 order: [['createdAt', 'ASC']],
             });
-        }
+        }*/
         if (!page) {
            page = 1;
         }

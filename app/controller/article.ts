@@ -8,11 +8,12 @@ export default class ArticleController extends Controller {
     public articleUpdateTransfer;
     constructor(ctx) {
         super(ctx);
-
         this.articleIndexTransfer = {
             page: {type: 'number', required: false, convertType: 'int', default: 1},
             pagesize: {type: 'number', required: false, convertType: 'int',  default: ctx.app.config.pagesize},
             searchkey: {type: 'string', required: false},
+            categoryId: {type: 'number', required: false, convertType: 'int'},
+            channelId: {type: 'number', required: true, convertType: 'int'},
         };
         this.articleTransfer = {
             channelId: {type: 'number', required: true, convertType: 'int'},
@@ -49,20 +50,20 @@ export default class ArticleController extends Controller {
     async index() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('role', 'list', ctx.request.headers.authorization, device);
+        await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.articleIndexTransfer, ctx.query);
         const payload = ctx.query;
-        const res = await service.role.index(payload);
+        const res = await service.article.index(payload);
         await ctx.helper.success(ctx, res, undefined);
     }
 
     async show() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('role', 'list', ctx.request.headers.authorization, device);
+        await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.articleShowTransfer, ctx.params);
         const payload = ctx.params;
-        const res = await service.role.findById(payload.id);
+        const res = await service.article.findById(payload.id);
         await ctx.helper.success(ctx, res, undefined);
     }
 
@@ -79,20 +80,20 @@ export default class ArticleController extends Controller {
     async update() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('role', 'edit', ctx.request.headers.authorization, device);
+        await service.authAuthInRole.check('article', 'edit', ctx.request.headers.authorization, device);
         ctx.validate(this.articleUpdateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
-        const res = await service.role.update(payload);
+        const res = await service.article.update(payload);
         await ctx.helper.success(ctx, res, '');
     }
 
     async destroy() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('role', 'delete', ctx.request.headers.authorization, device);
+        await service.authAuthInRole.check('article', 'delete', ctx.request.headers.authorization, device);
         ctx.validate(this.articleDeleteTransfer, ctx.request.body);
         const payload = ctx.request.body.ids;
-        const res = await service.role.destroy(payload);
+        const res = await service.article.destroy(payload);
         await ctx.helper.success(ctx, res, '');
     }
 }
