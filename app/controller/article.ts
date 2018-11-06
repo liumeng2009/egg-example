@@ -72,7 +72,7 @@ export default class ArticleController extends Controller {
         await service.authAuthInRole.check('article', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.articleTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
-        const res = await service.role.create(payload);
+        const res = await service.article.create(payload);
         await ctx.helper.success(ctx, res, '');
     }
 

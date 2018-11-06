@@ -4,7 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
       const {INTEGER,DATE,STRING,BOOLEAN,TEXT}=Sequelize;
 
-      return queryInterface.createTable('article_categories',{
+      return queryInterface.createTable('articles',{
           id:{type:INTEGER,primaryKey:true,autoIncrement:true,comment:'自增主键'},
           channelId:{type:INTEGER,allowNull:false},
           categoryId:{type:INTEGER,allowNull:false},

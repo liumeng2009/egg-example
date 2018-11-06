@@ -57,6 +57,6 @@ export default class ArticleService extends Service {
         if (!categoryResult) {
             throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST, undefined);
         }
-        return ctx.model.User.create(payload);
+        return ctx.model.Article.create(payload);
     }
 }

@@ -130,7 +130,6 @@ export default class AuthInRoleService extends Service {
         const RoleModel = ctx.model.Role;
         AuthInRoleModel.belongsTo(RoleModel, {foreignKey: 'roleId'});
         const UserModel = ctx.model.User;
-        // UserModel.belongsTo(RoleModel, {foreignKey: 'roleId'});
         RoleModel.hasMany(UserModel, {foreignKey: 'roleId'});
         let userSelect;
         if (device && device === 'webapp') {
@@ -144,7 +143,6 @@ export default class AuthInRoleService extends Service {
                 token: token,
             };
         }
-        console.log(func + op );
         const functionResult = await service.authFunction.findByCode(func);
         if (!functionResult) {
             throw new ApiError(ApiErrorNames.AUTH_FUNCTION_NOT_EXIST, undefined);
