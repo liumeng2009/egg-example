@@ -38,4 +38,5 @@ export default (app: Application) => {
   router.get('/api/content/article', controller.article.index);
   router.get('/api/content/article/:id', controller.article.show);
   router.post('/api/content/article', controller.article.create);
+  router.put('/api/content/article', controller.article.update);
 };

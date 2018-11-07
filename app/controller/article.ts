@@ -32,7 +32,7 @@ export default class ArticleController extends Controller {
             isSlide: {type: 'boolean', required: false, default: false},
             author: {type: 'number', required: true},
             auditing: {type: 'number', required: false},
-            publishAt: {type: 'date', required: false},
+            publishAt: {type: 'dateTime', convertType: 'string', required: false},
         };
         this.articleShowTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
@@ -42,8 +42,23 @@ export default class ArticleController extends Controller {
         };
         this.articleUpdateTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
-            name: {type: 'string', required: true},
-            remark: {type: 'string', required: false},
+            channelId: {type: 'number', required: false, convertType: 'int'},
+            categoryId: {type: 'number', required: false, convertType: 'int'},
+            title: {type: 'string', required: false},
+            imgUrl: {type: 'string', required: false},
+            zhaiyao: {type: 'string', required: false},
+            content: {type: 'string', required: false},
+            sort: {type: 'number', required: false},
+            click: {type: 'number', required: false},
+            status: {type: 'number', required: false},
+            isComment: {type: 'boolean', required: false, default: false},
+            isTop: {type: 'boolean', required: false, default: false},
+            isRed: {type: 'boolean', required: false, default: false},
+            isHot: {type: 'boolean', required: false, default: false},
+            isSlide: {type: 'boolean', required: false, default: false},
+            author: {type: 'number', required: false},
+            auditing: {type: 'number', required: false},
+            publishAt: {type: 'dateTime', convertType: 'string', required: false},
         };
     }
 
