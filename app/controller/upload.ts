@@ -1,6 +1,4 @@
 import {Controller} from 'egg';
-import {ApiError} from "../error/apiError";
-import {ApiErrorNames} from "../error/apiErrorNames";
 const fs = require('fs');
 const path = require('path');
 const awaitWriteStream = require('await-stream-ready').write;
@@ -28,7 +26,7 @@ export default class UploadController extends Controller {
         const folder = path.join(this.config.baseDir, 'app/public/uploads', folderName);
 
         if (fs.existsSync(folder)) {
-            throw new ApiError(ApiErrorNames.NO_AUTH, undefined);
+            // throw new ApiError(ApiErrorNames.NO_AUTH, undefined);
         } else {
             fs.mkdirSync(folder);
         }
