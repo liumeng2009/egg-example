@@ -44,7 +44,9 @@ export default class UploadController extends Controller {
         }
 
         // 设置响应内容和响应状态码
-        ctx.helper.success(ctx, {path : '/public/uploads/' + folderName + '/' + timeStamp + '-' + filename}, '上传成功');
+        ctx.helper.uploadSuccess(ctx, {
+            location : '/public/uploads/' + folderName + '/' + timeStamp + '-' + filename,
+        }, '上传成功');
     }
 
     // 上传多个文件

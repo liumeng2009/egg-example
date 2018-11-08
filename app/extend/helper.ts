@@ -19,3 +19,8 @@ exports.success = (ctx, res, message) => {
     }
     ctx.status = 200;
 }
+
+exports.uploadSuccess = (ctx, res) => {
+    ctx.body = res;
+    ctx.status = 200;
+}
