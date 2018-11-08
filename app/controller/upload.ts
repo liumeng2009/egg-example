@@ -12,7 +12,8 @@ export default class UploadController extends Controller {
 
     // 上传单个文件
     async create() {
-        const { ctx } = this
+        const { ctx, service } = this;
+        await service.userAccess.checkToken(ctx.request.headers.authorization, ctx.query.device);
         // 要通过 ctx.getFileStream 便捷的获取到用户上传的文件，需要满足两个条件：
         // 只支持上传一个文件。
         // 上传文件必须在所有其他的 fields 后面，否则在拿到文件流时可能还获取不到 fields。

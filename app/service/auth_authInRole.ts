@@ -120,6 +120,7 @@ export default class AuthInRoleService extends Service {
     }
     async check(func, op, token, device) {
         const { ctx , service} = this;
+        await service.userAccess.checkToken(token, device);
         const AuthInRoleModel = ctx.model.AuthAuthInRole;
         const OpInFuncModel = ctx.model.AuthOpInFunc;
         AuthInRoleModel.belongsTo(OpInFuncModel, {foreignKey: 'authId'});
@@ -185,7 +186,6 @@ export default class AuthInRoleService extends Service {
             ],
         });
         if (authResult.length > 0) {
-            console.log(JSON.stringify(authResult));
             return authResult;
         } else {
             throw new ApiError(ApiErrorNames.NO_AUTH, [functionResult.name + '的' + operateReulst.name + '权限']);
