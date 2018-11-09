@@ -36,6 +36,8 @@ export default (app: Application) => {
   router.post('/api/content/category', controller.articleCategory.create);
 
   router.get('/api/content/article', controller.article.index);
+  router.post('/api/content/article/delete', controller.article.destroy);
+  router.post('/api/content/article/auditing', controller.article.auditing);
   router.get('/api/content/article/:id', controller.article.show);
   router.post('/api/content/article', controller.article.create);
   router.put('/api/content/article', controller.article.update);

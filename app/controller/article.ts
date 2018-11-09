@@ -111,4 +111,13 @@ export default class ArticleController extends Controller {
         const res = await service.article.destroy(payload);
         await ctx.helper.success(ctx, res, '');
     }
+    async auditing() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('article', 'auditing', ctx.request.headers.authorization, device);
+        ctx.validate(this.articleDeleteTransfer, ctx.request.body);
+        const payload = ctx.request.body.ids;
+        const res = await service.article.auditing(payload);
+        await ctx.helper.success(ctx, res, '');
+    }
 }
