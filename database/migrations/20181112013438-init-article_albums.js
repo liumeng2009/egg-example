@@ -10,7 +10,7 @@ module.exports = {
           thumb_path:{type:STRING(255),comment:'缩略图路径'},
           origin_path:{type:STRING(255),allowNull:false,comment:'原图路径'},
           remark:{type:STRING(50)},
-          status:{type:INTEGER, allowNull:false,defaultValue:1},
+          status:{type:INTEGER,defaultValue:1},
           createdAt:{type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},
           updatedAt:{type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},
       })

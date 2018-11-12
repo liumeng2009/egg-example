@@ -116,11 +116,31 @@ export default class ArticleService extends Service {
             },
         });
     }
+    async findByIdExtend(id) {
+        const {ctx} = this;
+        const ArticleModel = ctx.model.Article;
+        const ArticleAlbumModel = ctx.model.ArticleAlbum;
+        ArticleModel.hasMany(ArticleAlbumModel, {foreignKey: 'articleId'});
+        return this.ctx.model.Article.findOne({
+            where: {
+                status: 1,
+                id: id,
+            },
+            include: [
+                {
+                    model: ArticleAlbumModel,
+                },
+            ],
+        });
+    }
     async findByCode(code) {
         return this.ctx.model.Article.findOne({
             where: {
                 status: 1,
-                code: code,
+                code: {
+                    $eq: code,
+                    $ne: null,
+                },
             },
         });
     }
@@ -128,6 +148,8 @@ export default class ArticleService extends Service {
         const {ctx, service} = this;
         const channelId = payload.channelId;
         const categoryId = payload.categoryId;
+        const albums = payload.article_albums;
+        console.log(payload);
         const channelResult = await service.channel.findById(channelId);
         if (!channelResult) {
             throw new ApiError(ApiErrorNames.CHANNEL_NOT_EXIST, undefined);
@@ -136,7 +158,29 @@ export default class ArticleService extends Service {
         if (!categoryResult) {
             throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST, undefined);
         }
-        return ctx.model.Article.create(payload);
+
+        const t = await ctx.model.transaction();
+        try {
+            const codeExist = await service.article.findByCode(payload.code);
+            if (codeExist) {
+                throw new ApiError(ApiErrorNames.ARTICLE_CODE_EXIST, undefined);
+            }
+            const addResult = await ctx.model.Article.create(payload, {transaction: t});
+            console.log(albums instanceof Array);
+            console.log(albums.length);
+            if (albums instanceof Array && albums.length > 0) {
+                console.log('here');
+                for (const a of albums) {
+                    a.articleId = addResult.id;
+                }
+                console.log(albums);
+                await ctx.model.ArticleAlbum.bulkCreate(albums, {transaction: t});
+            }
+            t.commit();
+        } catch (err) {
+            t.rollback();
+            throw new ApiError(ApiErrorNames.ARTICLE_SAVE_FAILED, [err]);
+        }
     }
     async update(payload) {
         const articleResult = await this.findById(payload.id);

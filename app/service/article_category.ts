@@ -55,7 +55,7 @@ export default class ArticleCategoryService extends Service {
         }
         const t = await ctx.model.transaction();
         try {
-            const addResult = await ctx.model.ArticleCategory.create(payload);
+            const addResult = await ctx.model.ArticleCategory.create(payload, {transaction: t});
             const parentArray = [];
             await this.findParentCategory(addResult.id, parentArray);
             let parentList = '';
@@ -65,7 +65,7 @@ export default class ArticleCategoryService extends Service {
             }
             payload.id = addResult.id;
             payload.parent_list = parentList;
-            await addResult.update(payload);
+            await addResult.update(payload, {transaction: t});
             t.commit();
         } catch (err) {
             t.rollback();

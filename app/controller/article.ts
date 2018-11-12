@@ -34,6 +34,7 @@ export default class ArticleController extends Controller {
             author: {type: 'number', required: true},
             auditing: {type: 'number', required: false},
             publishAt: {type: 'dateTime', convertType: 'string', required: false},
+            album: {type: 'array', required: false},
         };
         this.articleShowTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
@@ -82,7 +83,7 @@ export default class ArticleController extends Controller {
         await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.articleShowTransfer, ctx.params);
         const payload = ctx.params;
-        const res = await service.article.findById(payload.id);
+        const res = await service.article.findByIdExtend(payload.id);
         await ctx.helper.success(ctx, res, undefined);
     }
     async showByCode() {
