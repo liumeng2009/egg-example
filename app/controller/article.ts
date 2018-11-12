@@ -4,6 +4,7 @@ export default class ArticleController extends Controller {
     public articleIndexTransfer;
     public articleTransfer;
     public articleShowTransfer;
+    public articleShowByCodeTransfer;
     public articleDeleteTransfer;
     public articleUpdateTransfer;
     constructor(ctx) {
@@ -36,6 +37,9 @@ export default class ArticleController extends Controller {
         };
         this.articleShowTransfer = {
             id: {type: 'number', required: true, convertType: 'int'},
+        };
+        this.articleShowByCodeTransfer = {
+            code: {type: 'string', required: true},
         };
         this.articleDeleteTransfer = {
             ids: {type: 'array', required: true, itemType: 'int'},
@@ -79,6 +83,15 @@ export default class ArticleController extends Controller {
         ctx.validate(this.articleShowTransfer, ctx.params);
         const payload = ctx.params;
         const res = await service.article.findById(payload.id);
+        await ctx.helper.success(ctx, res, undefined);
+    }
+    async showByCode() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
+        ctx.validate(this.articleShowByCodeTransfer, ctx.params);
+        const payload = ctx.params;
+        const res = await service.article.findById(payload.code);
         await ctx.helper.success(ctx, res, undefined);
     }
 

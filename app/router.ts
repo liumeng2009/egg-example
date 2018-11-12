@@ -16,6 +16,7 @@ export default (app: Application) => {
 
   router.get('/api/avatar', controller.user.sysAvatar);
 
+  router.post('/api/upload/multiple', controller.upload.multiple);
   router.post('/api/upload', controller.upload.create);
 
   router.get('/api/role', controller.role.index);
@@ -39,6 +40,7 @@ export default (app: Application) => {
   router.post('/api/content/article/delete', controller.article.destroy);
   router.post('/api/content/article/auditing', controller.article.auditing);
   router.get('/api/content/article/:id', controller.article.show);
+  router.get('/api/content/article/code/:code', controller.article.showByCode);
   router.post('/api/content/article', controller.article.create);
   router.put('/api/content/article', controller.article.update);
 };

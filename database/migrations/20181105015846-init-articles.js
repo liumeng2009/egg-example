@@ -9,6 +9,7 @@ module.exports = {
           channelId:{type:INTEGER,allowNull:false},
           categoryId:{type:INTEGER,allowNull:false},
           title:{type:STRING(100),allowNull:false},
+          code: {type:STRING(50), unique: true},
           imgUrl:{type:STRING(255),comment:'封面图片'},
           zhaiyao:{type:STRING(255),comment:'摘要'},
           content:{type:TEXT},

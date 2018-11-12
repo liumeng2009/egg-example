@@ -4,6 +4,7 @@
 import 'egg'; // Make sure ts to import egg declaration at first
 import ActionToken from '../../../app/service/actionToken';
 import Article from '../../../app/service/article';
+import ArticleAlbum from '../../../app/service/article_album';
 import ArticleCategory from '../../../app/service/article_category';
 import AuthAuthInRole from '../../../app/service/auth_authInRole';
 import AuthFunction from '../../../app/service/auth_function';
@@ -20,6 +21,7 @@ declare module 'egg' {
   interface IService {
     actionToken: ActionToken;
     article: Article;
+    articleAlbum: ArticleAlbum;
     articleCategory: ArticleCategory;
     authAuthInRole: AuthAuthInRole;
     authFunction: AuthFunction;

@@ -3,7 +3,8 @@
 
 import 'egg'; // Make sure ts to import egg declaration at first
 import Article from '../../../app/controller/article';
-import ArticleCategory from '../../../app/controller/articleCategory';
+import ArticleAlbum from '../../../app/controller/article_album';
+import ArticleCategory from '../../../app/controller/article_category';
 import Auth from '../../../app/controller/auth';
 import Channel from '../../../app/controller/channel';
 import Home from '../../../app/controller/home';
@@ -15,6 +16,7 @@ import UserAccess from '../../../app/controller/userAccess';
 declare module 'egg' {
   interface IController {
     article: Article;
+    articleAlbum: ArticleAlbum;
     articleCategory: ArticleCategory;
     auth: Auth;
     channel: Channel;

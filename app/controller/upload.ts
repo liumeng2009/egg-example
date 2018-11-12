@@ -51,15 +51,26 @@ export default class UploadController extends Controller {
     }
 
     // 上传多个文件
-/*    async multiple() {
+    async multiple() {
         // 要获取同时上传的多个文件，不能通过 ctx.getFileStream() 来获取
-        const { ctx, service } = this
-        const parts = ctx.multipart()
-        const res = {}
-        const files = []
+        const { ctx, service } = this;
+        await service.userAccess.checkToken(ctx.request.headers.authorization, ctx.query.device);
+        const parts = ctx.multipart();
+        const files: string[] = [];
+        let part;
+        const date = new Date();
+        const folderName = (date.getFullYear()).toString() +
+            ((date.getMonth() + 1) > 9 ? (date.getMonth() + 1).toString() : ('0' + (date.getMonth() + 1)))
+            + (date.getDate() > 9 ? date.getDate().toString() : ('0' + date.getDate()));
+        const folder = path.join(this.config.baseDir, 'app/public/uploads', folderName);
 
-        let part // parts() return a promise
+        if (fs.existsSync(folder)) {
+            // throw new ApiError(ApiErrorNames.NO_AUTH, undefined);
+        } else {
+            fs.mkdirSync(folder);
+        }
         while ((part = await parts()) != null) {
+            console.log(part);
             if (part.length) {
                 // 如果是数组的话是 filed
                 // console.log('field: ' + part[0])
@@ -70,7 +81,7 @@ export default class UploadController extends Controller {
                 if (!part.filename) {
                     // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
                     // 需要做出处理，例如给出错误提示消息
-                    return
+                    return;
                 }
                 // part 是上传的文件流
                 // console.log('field: ' + part.fieldname)
@@ -78,35 +89,37 @@ export default class UploadController extends Controller {
                 // console.log('extname: ' + part.extname)
                 // console.log('encoding: ' + part.encoding)
                 // console.log('mime: ' + part.mime)
-                const filename = part.filename.toLowerCase() // 文件名称
-                const extname = path.extname(part.filename).toLowerCase() // 文件扩展名称
+                const filename = part.filename.toLowerCase(); // 文件名称
+                const extname = path.extname(part.filename).toLowerCase(); // 文件扩展名称
 
                 // 组装参数
-                const attachment = new ctx.model.Attachment
-                attachment.extname = extname
-                attachment.filename = filename
-                attachment.url = `/uploads/${attachment._id.toString()}${extname}`
+                // const attachment = new ctx.model.Attachment
+                // attachment.extname = extname
+                // attachment.filename = filename
+                // attachment.url = `/uploads/${attachment._id.toString()}${extname}`
                 // const target = path.join(this.config.baseDir, 'app/public/uploads', filename)
-                const target = path.join(this.config.baseDir, 'app/public/uploads', `${attachment._id.toString()}${extname}`)
+                const timeStamp = date.getTime();
+                const target = path.join(folder, timeStamp + '-' + filename + extname );
+                console.log(target);
+                // const target = path.join(this.config.baseDir, 'app/public/uploads', `${attachment._id.toString()}${extname}`)
                 const writeStream = fs.createWriteStream(target)
                 // 文件处理，上传到云存储等等
-                let res
                 try {
                     // result = await ctx.oss.put('egg-multipart-test/' + part.filename, part)
-                    await awaitWriteStream(part.pipe(writeStream))
+                    await awaitWriteStream(part.pipe(writeStream));
                     // 调用Service
-                    res = await service.upload.create(attachment)
+                    // res = await service.upload.create(attachment)
                 } catch (err) {
                     // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
                     await sendToWormhole(part)
-                    throw err
+                    throw err;
                 }
-                files.push(`${attachment._id}`) // console.log(result)
+                files.push(target); // console.log(result)
             }
         }
-        ctx.helper.success({ctx, res: { _ids:files }})
+        ctx.helper.uploadSuccess(ctx, {locations: files}, '上传成功');
     }
-
+/*
     // 删除单个文件
     async destroy() {
         const { ctx, service } = this

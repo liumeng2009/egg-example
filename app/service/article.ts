@@ -49,7 +49,9 @@ export default class ArticleService extends Service {
 /*        else {
             whereOBj = {status: statusObj, channelId: channelId};
         }*/
-        whereobj.$or = propsList;
+        if (propsList.length > 0) {
+            whereobj.$or = propsList;
+        }
         console.log(JSON.stringify(whereobj));
         const ArticleModel = this.ctx.model.Article;
         const CategoryModel = this.ctx.model.ArticleCategory;
@@ -111,6 +113,14 @@ export default class ArticleService extends Service {
             where: {
                 status: 1,
                 id: id,
+            },
+        });
+    }
+    async findByCode(code) {
+        return this.ctx.model.Article.findOne({
+            where: {
+                status: 1,
+                code: code,
             },
         });
     }

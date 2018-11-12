@@ -8,6 +8,7 @@ module.exports = (app) => {
         channelId: {type: INTEGER, required: true},
         categoryId: {type: INTEGER, required: true},
         title: {type: STRING(100), required: true},
+        code: {type: STRING(50)},
         imgUrl: {type: STRING(255)},
         zhaiyao: {type: STRING(255)},
         content: {type: TEXT},
