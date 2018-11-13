@@ -183,11 +183,50 @@ export default class ArticleService extends Service {
         }
     }
     async update(payload) {
+        const {ctx} = this;
+        console.log(payload);
+        const albums = payload.article_albums;
         const articleResult = await this.findById(payload.id);
         if (!articleResult) {
             throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
         }
-        return articleResult.update(payload);
+        const t = await ctx.model.transaction();
+        try {
+            const albumAdd: any[] = [];
+            const albumDelete: any[] = [];
+            if (albums instanceof Array && albums.length > 0) {
+                for (const al of albums) {
+                    if (al.action === 'add') {
+                        albumAdd.push(al);
+                    }
+                    if (al.action === 'delete') {
+                        albumDelete.push(al);
+                    }
+                }
+            }
+            if (albumAdd.length > 0) {
+                console.log('add');
+                console.log(albumAdd);
+                await ctx.model.ArticleAlbum.bulkCreate(albumAdd, {transaction: t});
+            }
+            if (albumDelete.length > 0) {
+                console.log('delete');
+                const deleteArray: number[] = [];
+                for (const ad of albumDelete) {
+                    deleteArray.push(ad.id);
+                }
+                await ctx.model.ArticleAlbum.destroy({
+                    where: {
+                        id: {$or: deleteArray},
+                    },
+                }, {transaction: t});
+            }
+            await articleResult.update(payload, {transaction: t, omitNull: true});
+            t.commit();
+        } catch (err) {
+            t.rollback();
+            throw new ApiError(ApiErrorNames.ARTICLE_SAVE_FAILED, [err]);
+        }
     }
     async destroy(payload) {
         const {ctx} = this;

@@ -19,7 +19,7 @@ export default class AuthController extends Controller {
             id: {type: 'number', required: true, convertType: 'int'},
         };
         this.authCheckTransfer = {
-            token: {type: 'string', required: true},
+            token: {type: 'string', required: false},
             device: {type: 'string', required: false},
             func: {type: 'string', required: true},
             op: {type: 'string', required: true},
@@ -68,6 +68,7 @@ export default class AuthController extends Controller {
             func: func,
             op: op,
         }
+        console.log(payload);
         ctx.validate(this.authCheckTransfer, payload);
         const res = await service.authAuthInRole.check(func, op, token, device);
         await ctx.helper.success(ctx, res, undefined);

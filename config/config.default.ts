@@ -25,6 +25,7 @@ export default (appInfo: EggAppInfo) => {
     username: 'root',
     password: '357852',
     timezone: '+8:00',
+    omitNull: false,
   }
 
   config.jwt = {
