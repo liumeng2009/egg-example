@@ -184,9 +184,8 @@ export default class ArticleService extends Service {
     }
     async update(payload) {
         const {ctx} = this;
-        console.log(payload);
         const albums = payload.article_albums;
-        const articleResult = await this.findById(payload.id);
+        let articleResult = await this.findById(payload.id);
         if (!articleResult) {
             throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
         }
@@ -205,12 +204,9 @@ export default class ArticleService extends Service {
                 }
             }
             if (albumAdd.length > 0) {
-                console.log('add');
-                console.log(albumAdd);
                 await ctx.model.ArticleAlbum.bulkCreate(albumAdd, {transaction: t});
             }
             if (albumDelete.length > 0) {
-                console.log('delete');
                 const deleteArray: number[] = [];
                 for (const ad of albumDelete) {
                     deleteArray.push(ad.id);
@@ -221,7 +217,7 @@ export default class ArticleService extends Service {
                     },
                 }, {transaction: t});
             }
-            await articleResult.update(payload, {transaction: t, omitNull: true});
+            await articleResult.update(payload, {transaction: t});
             t.commit();
         } catch (err) {
             t.rollback();
