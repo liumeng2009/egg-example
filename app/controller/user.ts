@@ -73,6 +73,19 @@ export default class UserController extends Controller {
         await ctx.helper.success(ctx, res, undefined);
     }
 
+    async showOwn() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        const token = ctx.request.headers.authorization;
+        await service.userAccess.checkToken(token, device);
+        // 获取自己的用户信息
+        // await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device);
+        // ctx.validate(this.userShowTransfer, ctx.params);
+        // const payload = ctx.params;
+        const res = await service.user.findByToken(token, device);
+        await ctx.helper.success(ctx, res, undefined);
+    }
+
     async create() {
         const {ctx, service} = this;
         const device = ctx.query.device;
@@ -104,7 +117,8 @@ export default class UserController extends Controller {
     async sysAvatar() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device);
+        // await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device);
+        await service.userAccess.checkToken(ctx.request.headers.authorization, device);
         const res = await service.user.sysAvatars();
         await ctx.helper.success(ctx, res, undefined);
     }

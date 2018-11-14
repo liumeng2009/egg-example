@@ -12,6 +12,7 @@ export default (app: Application) => {
   router.post('/api/user/delete', controller.user.destroy);
   router.post('/api/user', controller.user.create);
   router.put('/api/user', controller.user.update);
+  router.get('/api/user/show/own', controller.user.showOwn);
   router.get('/api/user/:id', controller.user.show);
 
   router.get('/api/avatar', controller.user.sysAvatar);
