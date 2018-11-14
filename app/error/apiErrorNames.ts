@@ -2,6 +2,8 @@ export const ApiErrorNames = {
     UNKNOW_ERROR : 'unknowError',
     USERNAME_NOT_EXIST : 'userNameNotExist',
     PASSWORD_ERROR : 'passwordError',
+    OLD_PASSWORD_ERROR: 'oldPasswordError',
+    PASSWORD_COMPARE_ERROR: 'passwordCompareError',
     TOKEN_NOT_EXIST: 'tokenNotExist',
     ROLE_NAME_MUST_UNIQUE: 'roleNameMustUnique',
     ROLE_NAME_CAN_NOT_NULL: 'roleNameCanNotNull',
@@ -28,8 +30,10 @@ export const ApiErrorNames = {
 };
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
-ApiErrorMap.set(ApiErrorNames.USERNAME_NOT_EXIST, { code: 53300, message: '用户不存在！' });
+ApiErrorMap.set(ApiErrorNames.USERNAME_NOT_EXIST, { code: 53300, message: '用户名不存在！' });
 ApiErrorMap.set(ApiErrorNames.PASSWORD_ERROR, {code: 53301, message: '密码错误！'});
+ApiErrorMap.set(ApiErrorNames.OLD_PASSWORD_ERROR, {code: 53301, message: '原密码错误！'});
+ApiErrorMap.set(ApiErrorNames.PASSWORD_COMPARE_ERROR, {code: 53301, message: '新录入的两个密码不一致！'});
 ApiErrorMap.set(ApiErrorNames.TOKEN_NOT_EXIST, {code: 53302, message: 'token不存在！'});
 ApiErrorMap.set(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, {code: 53303, message: '角色的名称已经存在！'});
 ApiErrorMap.set(ApiErrorNames.ROLE_NAME_CAN_NOT_NULL, {code: 53304, message: '角色的名称不能为空！'});

@@ -6,6 +6,7 @@ export default class UserController extends Controller {
     public userDeleteTransfer;
     public userTransfer;
     public userUpdateTransfer;
+    public changePasswordTransfer;
     constructor(ctx) {
         super(ctx);
         this.userIndexTransfer = {
@@ -38,6 +39,10 @@ export default class UserController extends Controller {
             roleId: {type: 'number', required: false, convertType: 'int'},
             avatar: {type: 'string', required: false},
             avatarUseSys: {type: 'enum', values: [1, 0], required: false, default: 1},
+        };
+        this.changePasswordTransfer = {
+            old_password: {type: 'string', required: true},
+            new_password: {type: 'string', required: true},
         };
     }
     async index() {
@@ -103,6 +108,15 @@ export default class UserController extends Controller {
         const payload = ctx.request.body || {};
         const res = await service.user.update(payload);
         await ctx.helper.success(ctx, res, '');
+    }
+    async changePassword() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        const token = ctx.request.headers.authorization;
+        ctx.validate(this.changePasswordTransfer, ctx.request.body);
+        const payload = ctx.request.body || {};
+        const res = await service.user.changePassword(payload, token, device);
+        await ctx.helper.success(ctx, res, '修改密码成功！请您重新登录。。。');
     }
     async destroy() {
         const {ctx, service} = this;

@@ -170,6 +170,22 @@ export default class UserService extends Service {
         }
         return userResultId.update(payload);
     }
+    async changePassword(payload, token, device) {
+        const {ctx, service} = this;
+        if (!payload.new_password === payload.new_password_compare) {
+            throw new ApiError(ApiErrorNames.PASSWORD_COMPARE_ERROR, undefined);
+        }
+        const userResult = await service.user.findByToken(token, device);
+        if (!userResult) {
+            throw new ApiError(ApiErrorNames.USER_ID_NOT_EXIST, undefined);
+        }
+        const verifyPsw = await ctx.compare(payload.old_password, userResult.password);
+        if (!verifyPsw) {
+            throw new ApiError(ApiErrorNames.OLD_PASSWORD_ERROR, undefined);
+        }
+        const hash = await ctx.genHash(payload.new_password, ctx.app.config.bcrypt.saltRounds)
+        return userResult.update({password: hash});
+    }
     async destroy(payload) {
         const {ctx} = this;
         const UserModel = ctx.model.User;
