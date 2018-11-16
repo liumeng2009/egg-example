@@ -110,7 +110,8 @@ export default class ArticleController extends Controller {
         const {ctx, service} = this;
         const device = ctx.query.device;
         await service.authAuthInRole.check('article', 'edit', ctx.request.headers.authorization, device);
-        // ctx.validate(this.articleUpdateTransfer, ctx.request.body);
+        console.log(ctx.request.body);
+        ctx.validate(this.articleUpdateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.article.update(payload);
         await ctx.helper.success(ctx, res, '');

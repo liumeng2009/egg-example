@@ -184,6 +184,7 @@ export default class ArticleService extends Service {
     }
     async update(payload) {
         const {ctx} = this;
+        console.log(payload);
         const albums = payload.article_albums;
         let articleResult = await this.findById(payload.id);
         if (!articleResult) {
@@ -193,7 +194,7 @@ export default class ArticleService extends Service {
         try {
             const albumAdd: any[] = [];
             const albumDelete: any[] = [];
-            if (albums instanceof Array && albums.length > 0) {
+            if (albums && albums instanceof Array && albums.length > 0) {
                 for (const al of albums) {
                     if (al.action === 'add') {
                         albumAdd.push(al);
@@ -217,10 +218,12 @@ export default class ArticleService extends Service {
                     },
                 }, {transaction: t});
             }
+            console.log(payload);
             await articleResult.update(payload, {transaction: t});
             t.commit();
         } catch (err) {
             t.rollback();
+            console.log(err);
             throw new ApiError(ApiErrorNames.ARTICLE_SAVE_FAILED, [err]);
         }
     }

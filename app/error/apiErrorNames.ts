@@ -56,7 +56,7 @@ ApiErrorMap.set(ApiErrorNames.CATEGORY_NOT_EXIST, {code: 53320, message: '分类
 ApiErrorMap.set(ApiErrorNames.CATEGORY_SAVE_FAILED, {code: 53321, message: '分类保存失败！原因是：{1}'});
 ApiErrorMap.set(ApiErrorNames.ARTICLE_NOT_EXIST, {code: 53322, message: '文章信息不存在！'});
 ApiErrorMap.set(ApiErrorNames.ARTICLE_CODE_EXIST, {code: 53323, message: '文章的调用别名已经存在！'});
-ApiErrorMap.set(ApiErrorNames.ARTICLE_SAVE_FAILED, {code: 53324, message: '文章保存失败！'});
+ApiErrorMap.set(ApiErrorNames.ARTICLE_SAVE_FAILED, {code: 53324, message: '文章保存失败！原因是：{1}'});
 
 export class ErrorTools {
     static getErrorInfo= (error_name) => {
