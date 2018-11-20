@@ -135,4 +135,9 @@ export default class ArticleController extends Controller {
         const res = await service.article.auditing(payload);
         await ctx.helper.success(ctx, res, '');
     }
+    async pushAlgoliaSearch() {
+        const {ctx, service} = this;
+        await service.article.pushAlgoliaSearch();
+        await ctx.helper.success(ctx, {}, '');
+    }
 }

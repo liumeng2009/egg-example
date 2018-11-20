@@ -21,6 +21,7 @@
     "clean": "ets clean"
   },
   "dependencies": {
+    "algoliasearch": "^3.30.0",
     "await-stream-ready": "^1.0.1",
     "bcryptjs": "^2.4.3",
     "egg": "^2.6.1",

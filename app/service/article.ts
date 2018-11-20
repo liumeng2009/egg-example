@@ -2,6 +2,7 @@ import {Service} from 'egg';
 import {ApiError} from '../error/apiError';
 import {ApiErrorNames} from '../error/apiErrorNames';
 import {IWhereObj} from './article.d';
+import * as algoliasearch from 'algoliasearch';
 
 export default class ArticleService extends Service {
     async index(payload) {
@@ -55,7 +56,7 @@ export default class ArticleService extends Service {
         console.log(JSON.stringify(whereobj));
         const ArticleModel = this.ctx.model.Article;
         const CategoryModel = this.ctx.model.ArticleCategory;
-        ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'})
+        ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
 /*        if (page === 0 && pagesize === 0) {
             return this.ctx.model.Article.findAndCountAll ({
                 where: whereOBj,
@@ -260,5 +261,34 @@ export default class ArticleService extends Service {
         return ArticleModel.update({status: 1}, {
             where: whereStr,
         });
+    }
+    async findAllArticle() {
+        const ArticleModel = this.ctx.model.Article;
+        const CategoryModel = this.ctx.model.ArticleCategory;
+        ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
+        return ArticleModel.findAll ({
+            where: {
+                status: 1,
+            },
+            include: [
+                {
+                    model: CategoryModel,
+                    require: true,
+                },
+            ],
+            order: [
+                ['sort', 'ASC'],
+                ['publishAt', 'DESC'],
+            ],
+        });
+    }
+    async pushAlgoliaSearch() {
+        const client = algoliasearch(
+            'Y2MNOEONET',
+            'a729eedd4490cfd5898cdc2f0bc672f9',
+        );
+        const index = client.initIndex('demo_egg');
+        const articleJson = await this.findAllArticle();
+        index.addObjects(articleJson);
     }
 }
