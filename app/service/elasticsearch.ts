@@ -1,6 +1,7 @@
 import {Service} from 'egg';
 import {ApiError} from '../error/apiError';
 import {ApiErrorNames} from '../error/apiErrorNames';
+import * as elasticsearch from 'elasticsearch';
 
 export default class ElasticsearchService extends Service {
     // 建立index:egg
@@ -56,11 +57,15 @@ export default class ElasticsearchService extends Service {
     }
 
     async create(articleId) {
-        const {app, service} = this;
+        const {service} = this;
         const article = await service.article.findByIdFull(articleId);
         if (!article) {
             throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
         }
+        const client = new elasticsearch.Client({
+            host: 'localhost:9200',
+            log: 'trace',
+        })
         const articleToElasticJson = {
             title: article.title,
             zhaiyao: article.zhaiyao,
@@ -69,11 +74,17 @@ export default class ElasticsearchService extends Service {
             category: article.article_category.name,
         }
         console.log(articleToElasticJson);
-        return app.curl(app.config.elasticsearchPath + 'egg/articles/' + article.id, {
+/*        return app.curl(app.config.elasticsearchPath + 'egg/articles/' + article.id, {
             method: 'PUT',
             dataType: 'json',
             headers: {'Content-Type' : 'application/json'},
             data: articleToElasticJson,
+        });*/
+        return client.index({
+            index: 'egg',
+            type: 'articles',
+            id: article.id,
+            body: articleToElasticJson,
         });
     }
 
@@ -95,5 +106,15 @@ export default class ElasticsearchService extends Service {
                 data: articleToElasticJson,
             });
         }
+    }
+    async search(searchkey) {
+        const client = new elasticsearch.Client({
+            host: 'localhost:9200',
+            log: 'trace',
+        });
+        return await client.search({
+            index: 'egg',
+            q: 'title:' + searchkey,
+        });
     }
 }

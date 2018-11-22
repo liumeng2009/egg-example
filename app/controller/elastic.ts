@@ -38,4 +38,11 @@ export default class ElastiCController extends Controller {
         console.log(res);
         await ctx.helper.success(ctx, res, '');
     }
+    async search() {
+        const {ctx, service} = this;
+        const searchkey = ctx.query.searchkey;
+        const res = await service.elasticsearch.search(searchkey);
+        console.log(res);
+        await ctx.helper.success(ctx, res, '');
+    }
 }
