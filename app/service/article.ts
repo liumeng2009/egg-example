@@ -117,6 +117,33 @@ export default class ArticleService extends Service {
             },
         });
     }
+    async findByIdFull(id) {
+        const ArticleModel = this.ctx.model.Article;
+        const CategoryModel = this.ctx.model.ArticleCategory;
+        const ChannelModel = this.ctx.model.Channel;
+        ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
+        ArticleModel.belongsTo(ChannelModel, {foreignKey: 'channelId'});
+        return ArticleModel.findOne ({
+            where: {
+                status: 1,
+                id: id,
+            },
+            include: [
+                {
+                    model: CategoryModel,
+                    require: true,
+                },
+                {
+                    model: ChannelModel,
+                    require: true,
+                },
+            ],
+            order: [
+                ['sort', 'ASC'],
+                ['publishAt', 'DESC'],
+            ],
+        });
+    }
     async findByIdExtend(id) {
         const {ctx} = this;
         const ArticleModel = ctx.model.Article;
@@ -266,6 +293,8 @@ export default class ArticleService extends Service {
         const ArticleModel = this.ctx.model.Article;
         const CategoryModel = this.ctx.model.ArticleCategory;
         ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
+        const ChannelModel = this.ctx.model.Channel;
+        ArticleModel.belongsTo(ChannelModel, {foreignKey: 'channelId'});
         return ArticleModel.findAll ({
             where: {
                 status: 1,
@@ -273,6 +302,10 @@ export default class ArticleService extends Service {
             include: [
                 {
                     model: CategoryModel,
+                    require: true,
+                },
+                {
+                    model: ChannelModel,
                     require: true,
                 },
             ],

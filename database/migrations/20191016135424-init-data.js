@@ -288,6 +288,46 @@ module.exports = {
           }
       ],{});
 
+      const elasticFunc = await queryInterface.bulkInsert('auth_functions',[
+          {
+              name: '全文检索管理',
+              code: 'elastic',
+              level: 1,
+              belong: cmsFunc,
+              sort: 8,
+          }
+      ],{})
+      const elasticMenu = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:menuOp,
+              funcId:elasticFunc,
+          }
+      ],{});
+      const elasticList = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:listOp,
+              funcId:elasticFunc,
+          }
+      ],{});
+      const elasticAdd = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:addOp,
+              funcId:elasticFunc,
+          }
+      ],{});
+      const elasticEdit = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:editOp,
+              funcId:elasticFunc,
+          }
+      ],{});
+      const elasticDelete = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:deleteOp,
+              funcId:elasticFunc,
+          }
+      ],{});
+
     // 所有权限赋值给admin role
     const roleHasAllAuth =  await queryInterface.bulkInsert('auth_authInRoles',[
         {roleId:roleResult, authId:authMenu,},
@@ -316,6 +356,11 @@ module.exports = {
         {roleId:roleResult, authId:articleCategoryAdd,},
         {roleId:roleResult, authId:articleCategoryEdit,},
         {roleId:roleResult, authId:articleCategoryDelete,},
+        {roleId:roleResult, authId:elasticAdd,},
+        {roleId:roleResult, authId:elasticMenu,},
+        {roleId:roleResult, authId:elasticList,},
+        {roleId:roleResult, authId:elasticEdit,},
+        {roleId:roleResult, authId:elasticDelete,},
     ],{})
   },
 

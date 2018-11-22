@@ -58,6 +58,8 @@ export default (appInfo: EggAppInfo) => {
 
   config.sysAvatarPath = appInfo.baseDir + '/app/public/uploads/avatar/dongman'
 
+  config.elasticsearchPath = 'http://localhost:9200/';
+
   // the return config will combines to EggAppConfig
   return {
     ...config,
