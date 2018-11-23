@@ -2,31 +2,15 @@ import {Controller} from 'egg';
 
 export default class ElastiCController extends Controller {
     public elasticCreateTransfer;
+    public elasticShowTransfer;
     constructor(ctx) {
         super(ctx);
         this.elasticCreateTransfer = {
-            articleId: {type: 'number', required: false, convertType: 'int'},
+            ids: {type: 'array', required: true, itemType: 'int'},
         };
-    }
-    async initIndex() {
-        const {ctx, service} = this;
-        // const device = ctx.query.device;
-        // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
-        // ctx.validate(this.elasticCreateTransfer, ctx.request.body);
-        // const payload = ctx.request.body || {};
-        const res = await service.elasticsearch.initIndex();
-        console.log(res);
-        await ctx.helper.success(ctx, res, '');
-    }
-    async initType() {
-        const {ctx, service} = this;
-        // const device = ctx.query.device;
-        // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
-        // ctx.validate(this.elasticCreateTransfer, ctx.request.body);
-        // const payload = ctx.request.body || {};
-        const res = await service.elasticsearch.initType();
-        console.log(res);
-        await ctx.helper.success(ctx, res, '');
+        this.elasticShowTransfer = {
+            id: {type: 'number', required: true, convertType: 'int'},
+        };
     }
     async create() {
         const {ctx, service} = this;
@@ -34,15 +18,31 @@ export default class ElastiCController extends Controller {
         // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.elasticCreateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
-        const res = await service.elasticsearch.create(payload.articleId);
-        console.log(res);
+        const res = await service.elasticsearch.create(payload.ids);
         await ctx.helper.success(ctx, res, '');
+    }
+    async destroy() {
+        const {ctx, service} = this;
+        // const device = ctx.query.device;
+        // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
+        ctx.validate(this.elasticCreateTransfer, ctx.request.body);
+        const payload = ctx.request.body || {};
+        const res = await service.elasticsearch.destroy(payload.ids);
+        await ctx.helper.success(ctx, res, '');
+    }
+    async show() {
+        const {ctx, service} = this;
+        // const device = ctx.query.device;
+        // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
+        ctx.validate(this.elasticShowTransfer, ctx.params);
+        const payload = ctx.params || {};
+        const res = await service.elasticsearch.show(payload);
+        await ctx.helper.success(ctx, res, undefined);
     }
     async search() {
         const {ctx, service} = this;
         const searchkey = ctx.query.searchkey;
         const res = await service.elasticsearch.search(searchkey);
-        console.log(res);
         await ctx.helper.success(ctx, res, '');
     }
 }

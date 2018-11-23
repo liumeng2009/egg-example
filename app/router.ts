@@ -47,7 +47,7 @@ export default (app: Application) => {
   router.put('/api/content/article', controller.article.update);
 
   router.post('/api/elastic', controller.elastic.create);
+  router.post('/api/elastic/delete', controller.elastic.destroy);
+  router.get('/api/elastic/:id', controller.elastic.show);
   router.get('/api/elastic', controller.elastic.search);
-  router.get('/api/elastic/initIndex', controller.elastic.initIndex);
-  router.get('/api/elastic/initType', controller.elastic.initType);
 };

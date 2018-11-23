@@ -1,118 +1,136 @@
 import {Service} from 'egg';
+import * as elasticsearch from 'elasticsearch';
 import {ApiError} from '../error/apiError';
 import {ApiErrorNames} from '../error/apiErrorNames';
-import * as elasticsearch from 'elasticsearch';
 
 export default class ElasticsearchService extends Service {
-    // 建立index:egg
-    async initIndex() {
-        await this.app.curl(this.app.config.elasticsearchPath + 'egg', {
-            method: 'PUT',
-            dataType: 'json',
-        });
-    }
-
-    async initType() {
-        const typeAddJson = {
-            mappings: {
-                articles: {
-                    properties: {
-                        title: {
-                            type: 'text',
-                            analyzer: 'ik_max_word',
-                            search_analyzer: 'ik_max_word',
-                        },
-                        zhaiyao: {
-                            type: 'text',
-                            analyzer: 'ik_max_word',
-                            search_analyzer: 'ik_max_word',
-                        },
-                        content: {
-                            type: 'text',
-                            analyzer: 'ik_max_word',
-                            search_analyzer: 'ik_max_word',
-                        },
-                        channel: {
-                            type: 'text',
-                            analyzer: 'ik_max_word',
-                            search_analyzer: 'ik_max_word',
-                        },
-                        category: {
-                            type: 'text',
-                            analyzer: 'ik_max_word',
-                            search_analyzer: 'ik_max_word',
-                        },
-                        publishAt: {
-                            type: 'text',
-                        },
-                    },
-                },
-            },
-        };
-        await this.app.curl(this.app.config.elasticsearchPath + 'egg', {
-            method: 'PUT',
-            data: typeAddJson,
-            dataType: 'json',
-        });
-    }
-
-    async create(articleId) {
-        const {service} = this;
-        const article = await service.article.findByIdFull(articleId);
-        if (!article) {
-            throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
-        }
-        const client = new elasticsearch.Client({
+    public client;
+    constructor(ctx) {
+        super(ctx)
+        this.client = new elasticsearch.Client({
             host: 'localhost:9200',
             log: 'trace',
-        })
-        const articleToElasticJson = {
-            title: article.title,
-            zhaiyao: article.zhaiyao,
-            content: article.content,
-            channel: article.channel.name,
-            category: article.article_category.name,
-        }
-        console.log(articleToElasticJson);
-/*        return app.curl(app.config.elasticsearchPath + 'egg/articles/' + article.id, {
-            method: 'PUT',
-            dataType: 'json',
-            headers: {'Content-Type' : 'application/json'},
-            data: articleToElasticJson,
-        });*/
-        return client.index({
-            index: 'egg',
-            type: 'articles',
-            id: article.id,
-            body: articleToElasticJson,
         });
     }
 
-    async createAll() {
-        const {app, service} = this;
-        const articles = await service.article.findAllArticle();
+    async create(payload) {
+        let whereStr = {};
+        if (payload instanceof Array && payload.length > 0) {
+            whereStr = {
+                id: {$or : payload},
+                status: 1,
+            };
+        } else {
+            whereStr = {
+                id: 0,
+                status: 1,
+            };
+        }
+        const ArticleModel = this.ctx.model.Article;
+        const CategoryModel = this.ctx.model.ArticleCategory;
+        const ChannelModel = this.ctx.model.Channel;
+        ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
+        ArticleModel.belongsTo(ChannelModel, {foreignKey: 'channelId'});
+        const articles = await ArticleModel.findAll ({
+            where: whereStr,
+            include: [
+                {
+                    model: CategoryModel,
+                    require: true,
+                },
+                {
+                    model: ChannelModel,
+                    require: true,
+                },
+            ],
+            order: [
+                ['sort', 'ASC'],
+                ['publishAt', 'DESC'],
+            ],
+        });
+        const articleToElasticJson: any[] = []
         for (const article of articles) {
-            const articleToElasticJson = {
+            const actionJson = {
+                index: {
+                    _index: 'egg',
+                    _type: 'articles',
+                    _id: article.id,
+                },
+            };
+            const articleJson = {
                 title: article.title,
                 zhaiyao: article.zhaiyao,
                 content: article.content,
-                channel: article.channel.name,
+                publishAt: article.publishAt,
                 category: article.article_category.name,
+                channel: article.channel.name,
             };
-            await app.curl(app.config.elasticsearchPath + 'egg/article/' + article.id, {
-                method: 'PUT',
-                dataType: 'json',
-                headers: {'Content-Type' : 'application/json'},
-                data: articleToElasticJson,
-            });
+            articleToElasticJson.push(actionJson);
+            articleToElasticJson.push(articleJson);
         }
+        if (articleToElasticJson.length === 0) {
+            throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
+        }
+        const elasticBulk = this.client.bulk({
+            index: 'egg',
+            type: 'articles',
+            body: articleToElasticJson,
+        });
+        await ArticleModel.update({isElastic: true}, {
+            where: whereStr,
+        });
+        return elasticBulk;
+    }
+
+    async createAll() {
+
+    }
+
+    async destroy(payload) {
+        const ArticleModel = this.ctx.model.Article;
+        let whereStr = {};
+        const articleToElasticJson: any[] = []
+        if (payload instanceof Array && payload.length > 0) {
+            whereStr = {
+                id: {$or : payload},
+                status: 1,
+            };
+            for (const id of payload) {
+                const actionJson = {
+                    delete: {
+                        _index: 'egg',
+                        _type: 'articles',
+                        _id: id,
+                    },
+                };
+                articleToElasticJson.push(actionJson);
+            }
+        } else {
+            whereStr = {
+                id: 0,
+                status: 1,
+            };
+            throw new ApiError(ApiErrorNames.AT_LEAST_ONE_RECORD_REQUIRED, undefined);
+        }
+        const elasticBulk = this.client.bulk({
+            index: 'egg',
+            type: 'articles',
+            body: articleToElasticJson,
+        });
+        await ArticleModel.update({isElastic: false}, {
+            where: whereStr,
+        });
+        return elasticBulk;
+    }
+    async show(payload) {
+        return this.client.get({
+            index: 'egg',
+            type: 'articles',
+            id: payload.id,
+        });
     }
     async search(searchkey) {
-        const client = new elasticsearch.Client({
-            host: 'localhost:9200',
-            log: 'trace',
-        });
-        return await client.search({
+        return this.client.search({
             index: 'egg',
             q: 'title:' + searchkey,
         });

@@ -177,7 +177,6 @@ export default class ArticleService extends Service {
         const channelId = payload.channelId;
         const categoryId = payload.categoryId;
         const albums = payload.article_albums;
-        console.log(payload);
         const channelResult = await service.channel.findById(channelId);
         if (!channelResult) {
             throw new ApiError(ApiErrorNames.CHANNEL_NOT_EXIST, undefined);
@@ -194,14 +193,10 @@ export default class ArticleService extends Service {
                 throw new ApiError(ApiErrorNames.ARTICLE_CODE_EXIST, undefined);
             }
             const addResult = await ctx.model.Article.create(payload, {transaction: t});
-            console.log(albums instanceof Array);
-            console.log(albums.length);
             if (albums instanceof Array && albums.length > 0) {
-                console.log('here');
                 for (const a of albums) {
                     a.articleId = addResult.id;
                 }
-                console.log(albums);
                 await ctx.model.ArticleAlbum.bulkCreate(albums, {transaction: t});
             }
             t.commit();
