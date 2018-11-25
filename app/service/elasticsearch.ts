@@ -132,7 +132,36 @@ export default class ElasticsearchService extends Service {
     async search(searchkey) {
         return this.client.search({
             index: 'egg',
-            q: 'title:' + searchkey,
+            body: {
+                query: {
+                    bool: {
+                        should: [
+                            {
+                                match: {title: searchkey},
+                            },
+                            {
+                                match: {zhaiyao: searchkey},
+                            },
+                            {
+                                match: {content: searchkey},
+                            },
+                        ],
+                    },
+                },
+                highlight: {
+                    fields: {
+                        title : {},
+                        zhaiyao: {},
+                    },
+                },
+                aggs: {
+                    group_by_channel: {
+                        terms: {
+                            field: 'channel.keyword',
+                        },
+                    },
+                },
+            },
         });
     }
 }
