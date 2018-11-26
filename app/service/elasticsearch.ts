@@ -58,6 +58,7 @@ export default class ElasticsearchService extends Service {
                 },
             };
             const articleJson = {
+                id: article.id,
                 title: article.title,
                 zhaiyao: article.zhaiyao,
                 content: article.content,
@@ -69,7 +70,7 @@ export default class ElasticsearchService extends Service {
             articleToElasticJson.push(articleJson);
         }
         if (articleToElasticJson.length === 0) {
-            throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.AT_LEAST_ONE_RECORD_REQUIRED, undefined);
         }
         const elasticBulk = this.client.bulk({
             index: 'egg',
@@ -132,6 +133,7 @@ export default class ElasticsearchService extends Service {
     async search(searchkey) {
         return this.client.search({
             index: 'egg',
+            size: 10,
             body: {
                 query: {
                     bool: {
@@ -153,6 +155,9 @@ export default class ElasticsearchService extends Service {
                         title : {},
                         zhaiyao: {},
                     },
+                    pre_tags : ['<div>'],
+                    post_tags : ['</div>'],
+                    tags_schema : 'styled',
                 },
                 aggs: {
                     group_by_channel: {
