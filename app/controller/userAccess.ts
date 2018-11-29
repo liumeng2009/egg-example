@@ -22,7 +22,7 @@ export default class UserAccessController extends Controller {
         } else {
             username = res.user.mobile;
         }
-        const message = '登录成功！' + username + '，欢迎你！';
+        const message = ctx.__('loginSuccess,%s!', username);
         await ctx.helper.success(ctx, res, message);
     }
 

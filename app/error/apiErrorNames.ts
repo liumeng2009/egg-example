@@ -32,7 +32,7 @@ export const ApiErrorNames = {
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
 ApiErrorMap.set(ApiErrorNames.USERNAME_NOT_EXIST, { code: 53300, message: '用户名不存在！' });
-ApiErrorMap.set(ApiErrorNames.PASSWORD_ERROR, {code: 53301, message: '密码错误1111111！'});
+ApiErrorMap.set(ApiErrorNames.PASSWORD_ERROR, {code: 53301, message: '密码错误！'});
 ApiErrorMap.set(ApiErrorNames.OLD_PASSWORD_ERROR, {code: 53326, message: '原密码错误！'});
 ApiErrorMap.set(ApiErrorNames.PASSWORD_COMPARE_ERROR, {code: 53327, message: '新录入的两个密码不一致！'});
 ApiErrorMap.set(ApiErrorNames.TOKEN_NOT_EXIST, {code: 53302, message: 'token不存在！'});
