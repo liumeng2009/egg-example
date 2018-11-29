@@ -26,6 +26,10 @@ const plugin: EggPlugin = {
         enable: true,
         package: 'egg-bcrypt',
     },
+    i18n : {
+        enable: true,
+        package: 'egg-i18n',
+    },
 };
 
 export default plugin;

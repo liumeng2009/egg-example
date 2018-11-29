@@ -61,6 +61,10 @@ export default (appInfo: EggAppInfo) => {
       widelyUndefined : true,
   }
 
+  config.i18n = {
+    defaultLocale: 'en-US',
+  }
+
   config.pageSize = 15
 
   config.sysAvatarPath = appInfo.baseDir + '/app/public/uploads/avatar/dongman'

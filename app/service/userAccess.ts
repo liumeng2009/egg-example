@@ -15,9 +15,11 @@ module.exports = (app) => {
             if (!userResult.isAdmin) {
                 throw new ApiError(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN, undefined);
             }
+            console.log(ctx.__('passwordError'));
             const verifyPsw = await ctx.compare(user.password, userResult.password);
             if (!verifyPsw) {
-                throw new ApiError(ApiErrorNames.PASSWORD_ERROR, undefined);
+                // throw new ApiError(ApiErrorNames.PASSWORD_ERROR, undefined);
+                throw new ApiError(ApiErrorNames.PASSWORD_ERROR, ctx.__('passwordError'));
             }
 
             const token = await service.actionToken.apply(userResult.id, userResult.mobile, userResult.realname);
