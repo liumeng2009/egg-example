@@ -10,10 +10,11 @@ module.exports = (app) => {
 
             const userResult = await service.user.findByMobile(user.mobile);
             if (!userResult) {
-                throw new ApiError(ApiErrorNames.USERNAME_NOT_EXIST, undefined);
+                throw new ApiError(ApiErrorNames.USERNAME_NOT_EXIST, ctx.__(ApiErrorNames.USERNAME_NOT_EXIST));
             }
             if (!userResult.isAdmin) {
-                throw new ApiError(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN, undefined);
+                throw new ApiError(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN,
+                    ctx.__(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN));
             }
             const verifyPsw = await ctx.compare(user.password, userResult.password);
             if (!verifyPsw) {
@@ -29,10 +30,10 @@ module.exports = (app) => {
             };
         }
         async checkToken(token: string, device) {
-            const {service, config} = this;
+            const {ctx, service, config} = this;
             const userResult = await service.user.findByTokenFull(token, device);
             if (!userResult) {
-                throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, undefined);
+                throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, ctx.__(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN));
             }
             await app.jwt.verify(token, config.jwt.secret);
             return userResult;
