@@ -50,4 +50,6 @@ export default (app: Application) => {
   router.post('/api/elastic/delete', controller.elastic.destroy);
   router.get('/api/elastic/:id', controller.elastic.show);
   router.get('/api/elastic', controller.elastic.search);
+
+  router.get('/api/public/article', controller.article.publicIndex);
 };

@@ -28,6 +28,8 @@ export const ApiErrorNames = {
     ARTICLE_CODE_EXIST: 'articleCodeExist',
     ARTICLE_SAVE_FAILED: 'articleSaveFailed',
     AT_LEAST_ONE_RECORD_REQUIRED: 'atLeastOneRecordRequired',
+    CATEGORY_CODE_NOT_EXIST: 'categoryCodeNotExist',
+    CATEGORY_CODE_IS_EXIST: 'categoryCodeIsExist',
 };
 export const ApiErrorMap = new Map();
 ApiErrorMap.set(ApiErrorNames.UNKNOW_ERROR, { code: 500, message: '未知错误！' });
@@ -59,6 +61,8 @@ ApiErrorMap.set(ApiErrorNames.ARTICLE_NOT_EXIST, {code: 53322, message: '文章�
 ApiErrorMap.set(ApiErrorNames.ARTICLE_CODE_EXIST, {code: 53323, message: '文章的调用别名已经存在！'});
 ApiErrorMap.set(ApiErrorNames.ARTICLE_SAVE_FAILED, {code: 53324, message: '文章保存失败！原因是：{1}'});
 ApiErrorMap.set(ApiErrorNames.AT_LEAST_ONE_RECORD_REQUIRED, {code: 53325, message: '请至少选取一条记录进行操作！'});
+ApiErrorMap.set(ApiErrorNames.CATEGORY_CODE_NOT_EXIST, {code: 53326});
+ApiErrorMap.set(ApiErrorNames.CATEGORY_CODE_IS_EXIST, {code: 53327});
 
 export class ErrorTools {
     static getErrorInfo= (error_name) => {

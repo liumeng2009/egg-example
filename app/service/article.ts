@@ -319,4 +319,16 @@ export default class ArticleService extends Service {
         const articleJson = await this.findAllArticle();
         index.addObjects(articleJson);
     }
+    async publicIndexByCategoryCode(code) {
+        const {ctx} = this;
+        const category = await this.findByCode(code);
+        if (!category) {
+            throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST,
+                ctx.__(ApiErrorNames.CATEGORY_NOT_EXIST));
+        }
+        const categoryId = category.id;
+        console.log(categoryId);
+        const articleList = await this.index({categoryId: categoryId});
+        return articleList;
+    }
 }

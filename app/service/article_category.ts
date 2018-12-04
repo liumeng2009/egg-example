@@ -23,7 +23,10 @@ export default class ArticleCategoryService extends Service {
         return this.ctx.model.ArticleCategory.findOne({
             where: {
                 status: 1,
-                code: code,
+                code: {
+                    $eq: code,
+                    $ne: null,
+                },
             },
         });
     }
@@ -43,9 +46,14 @@ export default class ArticleCategoryService extends Service {
         const {ctx, service} = this;
         const channelId = payload.channelId;
         const parentId = payload.parentId;
-        const channelResult = service.channel.findById(channelId);
+        const code = payload.code;
+        const channelResult = await service.channel.findById(channelId);
         if (!channelResult) {
            throw new ApiError(ApiErrorNames.CHANNEL_NOT_EXIST, undefined);
+        }
+        const checkCode = await this.findByCode(code)
+        if (checkCode) {
+            throw new ApiError(ApiErrorNames.CATEGORY_CODE_IS_EXIST, ctx.__(ApiErrorNames.CATEGORY_CODE_IS_EXIST));
         }
         if (parentId !== 0) {
             const parentResult = service.articleCategory.findById(parentId);
@@ -58,7 +66,7 @@ export default class ArticleCategoryService extends Service {
             const addResult = await ctx.model.ArticleCategory.create(payload, {transaction: t});
             const parentArray = [];
             await this.findParentCategory(addResult.id, parentArray);
-            let parentList = '';
+            let parentList = ',' + addResult.id;
             for (const parent of parentArray) {
 
                 parentList = parentList + ',' + parent;
@@ -69,7 +77,7 @@ export default class ArticleCategoryService extends Service {
             t.commit();
         } catch (err) {
             t.rollback();
-            throw new ApiError(ApiErrorNames.CATEGORY_SAVE_FAILED, [err]);
+            throw new ApiError(ApiErrorNames.CATEGORY_SAVE_FAILED, ctx.__(ApiErrorNames.CATEGORY_SAVE_FAILED, err));
         }
     }
     async findParentCategory(id, resultArray) {

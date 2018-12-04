@@ -28,6 +28,8 @@ module.exports = {
     articleCodeExist: 'The alias of the article already exists.',
     articleSaveFailed: 'Failed to save category. As a result of: %s',
     atLeastOneRecordRequired: 'Please select at least one record for operation.',
+    categoryCodeNotExist: 'The category code does not exist.',
+    categoryCodeIsExist: 'The category code already exists.',
 
     loginSuccess: 'Login successfully. %s',
 }

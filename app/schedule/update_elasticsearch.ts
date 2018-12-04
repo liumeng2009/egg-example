@@ -4,7 +4,7 @@ import * as elasticsearch from 'elasticsearch';
 export default class UpdateElasticsearch extends Subscription {
     static get schedule() {
         return {
-            interval: '1m', // 1 分钟间隔
+            interval: '1h', // 1 分钟间隔
             type: 'all', // 指定所有的 worker 都需要执行
             immediate: true,
             disable: false,

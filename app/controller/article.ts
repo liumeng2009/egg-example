@@ -7,6 +7,7 @@ export default class ArticleController extends Controller {
     public articleShowByCodeTransfer;
     public articleDeleteTransfer;
     public articleUpdateTransfer;
+    public articlePublicIndexTransfer;
     constructor(ctx) {
         super(ctx);
         this.articleIndexTransfer = {
@@ -64,6 +65,9 @@ export default class ArticleController extends Controller {
             author: {type: 'number', required: false},
             auditing: {type: 'number', required: false},
             publishAt: {type: 'dateTime', convertType: 'string', required: false},
+        };
+        this.articlePublicIndexTransfer = {
+            code: {type: 'string', required: true},
         };
     }
 
@@ -131,6 +135,13 @@ export default class ArticleController extends Controller {
         const device = ctx.query.device;
         await service.authAuthInRole.check('article', 'auditing', ctx.request.headers.authorization, device);
         ctx.validate(this.articleDeleteTransfer, ctx.request.body);
+        const payload = ctx.request.body.ids;
+        const res = await service.article.auditing(payload);
+        await ctx.helper.success(ctx, res, '');
+    }
+    async publicIndex() {
+        const {ctx, service} = this;
+        ctx.validate(this.articlePublicIndexTransfer, ctx.params);
         const payload = ctx.request.body.ids;
         const res = await service.article.auditing(payload);
         await ctx.helper.success(ctx, res, '');
