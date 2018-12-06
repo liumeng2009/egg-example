@@ -141,9 +141,9 @@ export default class ArticleController extends Controller {
     }
     async publicIndex() {
         const {ctx, service} = this;
-        ctx.validate(this.articlePublicIndexTransfer, ctx.params);
-        const payload = ctx.request.body.ids;
-        const res = await service.article.auditing(payload);
-        await ctx.helper.success(ctx, res, '');
+        ctx.validate(this.articlePublicIndexTransfer, ctx.query);
+        const payload = ctx.query;
+        const res = await service.article.publicIndexByCategoryCode(payload.code);
+        await ctx.helper.success(ctx, res, undefined);
     }
 }

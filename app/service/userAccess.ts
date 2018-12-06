@@ -33,7 +33,7 @@ module.exports = (app) => {
             const {ctx, service, config} = this;
             const userResult = await service.user.findByTokenFull(token, device);
             if (!userResult) {
-                throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, ctx.__(ApiErrorNames.USER_CAN_NOT_LOGIN_ADMIN));
+                throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, ctx.__(ApiErrorNames.TOKEN_NOT_EXIST));
             }
             await app.jwt.verify(token, config.jwt.secret);
             return userResult;

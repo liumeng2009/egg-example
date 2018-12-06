@@ -31,5 +31,6 @@ module.exports = {
     categoryCodeNotExist: 'The category code does not exist.',
     categoryCodeIsExist: 'The category code already exists.',
 
-    loginSuccess: 'Login successfully. %s',
+    loginSuccess: 'Login successful. %s',
+    requestSuccess: 'Request successful.',
 }

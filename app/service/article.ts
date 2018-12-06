@@ -6,7 +6,6 @@ import * as algoliasearch from 'algoliasearch';
 
 export default class ArticleService extends Service {
     async index(payload) {
-        console.log(payload);
         let {page, pagesize} = payload;
         const {searchkey, channelId, categoryId, status, isComment, isTop,
             isRed, isHot, isSlide} = payload;
@@ -53,19 +52,9 @@ export default class ArticleService extends Service {
         if (propsList.length > 0) {
             whereobj.$or = propsList;
         }
-        console.log(JSON.stringify(whereobj));
         const ArticleModel = this.ctx.model.Article;
         const CategoryModel = this.ctx.model.ArticleCategory;
         ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
-/*        if (page === 0 && pagesize === 0) {
-            return this.ctx.model.Article.findAndCountAll ({
-                where: whereOBj,
-                order: [
-                    ['sort', 'ASC'],
-                    ['publishAt', 'DESC'],
-                ],
-            });
-        }*/
         if (!page) {
             page = 1;
         }
@@ -320,15 +309,38 @@ export default class ArticleService extends Service {
         index.addObjects(articleJson);
     }
     async publicIndexByCategoryCode(code) {
-        const {ctx} = this;
-        const category = await this.findByCode(code);
+        const {ctx, service} = this;
+        const category = await service.articleCategory.findByCode(code);
         if (!category) {
             throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST,
                 ctx.__(ApiErrorNames.CATEGORY_NOT_EXIST));
         }
         const categoryId = category.id;
-        console.log(categoryId);
-        const articleList = await this.index({categoryId: categoryId});
-        return articleList;
+        const CategoryModel = ctx.model.ArticleCategory;
+        const ArticleModel = ctx.model.Article;
+        ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
+        return ArticleModel.findAll ({
+            where: {
+                status: 1,
+            },
+            include: [
+                {
+                    model: CategoryModel,
+                    require: true,
+                    where: {
+                        parent_list: {
+                            $or: [
+                                {$regexp: ',' + categoryId},
+                                {$regexp: ',' + categoryId + ','},
+                            ],
+                        },
+                    },
+                },
+            ],
+            order: [
+                ['sort', 'ASC'],
+                ['publishAt', 'DESC'],
+            ],
+        });
     }
 }

@@ -9,7 +9,7 @@ exports.success = (ctx, res, message) => {
         ctx.body = {
             code: 0,
             data: res,
-            message: '请求成功！',
+            message: ctx.__('requestSuccess'),
         };
     }else {
         ctx.body = {
