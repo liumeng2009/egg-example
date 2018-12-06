@@ -52,4 +52,5 @@ export default (app: Application) => {
   router.get('/api/elastic', controller.elastic.search);
 
   router.get('/api/public/article', controller.article.publicIndex);
+  router.get('/api/public/article/:id', controller.article.publicShow);
 };

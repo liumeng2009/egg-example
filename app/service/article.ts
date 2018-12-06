@@ -2,7 +2,6 @@ import {Service} from 'egg';
 import {ApiError} from '../error/apiError';
 import {ApiErrorNames} from '../error/apiErrorNames';
 import {IWhereObj} from './article.d';
-import * as algoliasearch from 'algoliasearch';
 
 export default class ArticleService extends Service {
     async index(payload) {
@@ -161,6 +160,26 @@ export default class ArticleService extends Service {
             },
         });
     }
+    async findByCodeExtend(code) {
+        const {ctx} = this;
+        const ArticleModel = ctx.model.Article;
+        const ArticleAlbumModel = ctx.model.ArticleAlbum;
+        ArticleModel.hasMany(ArticleAlbumModel, {foreignKey: 'articleId'});
+        return this.ctx.model.Article.findOne({
+            where: {
+                status: 1,
+                code: {
+                    $eq: code,
+                    $ne: null,
+                },
+            },
+            include: [
+                {
+                    model: ArticleAlbumModel,
+                },
+            ],
+        });
+    }
     async create(payload) {
         const {ctx, service} = this;
         const channelId = payload.channelId;
@@ -299,23 +318,23 @@ export default class ArticleService extends Service {
             ],
         });
     }
-    async pushAlgoliaSearch() {
-        const client = algoliasearch(
-            'Y2MNOEONET',
-            'a729eedd4490cfd5898cdc2f0bc672f9',
-        );
-        const index = client.initIndex('demo_egg');
-        const articleJson = await this.findAllArticle();
-        index.addObjects(articleJson);
-    }
-    async publicIndexByCategoryCode(code) {
+    async publicIndexByCategoryCode(payload) {
         const {ctx, service} = this;
+        let {page, pagesize} = payload;
+        const {code} = payload;
         const category = await service.articleCategory.findByCode(code);
         if (!category) {
             throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST,
                 ctx.__(ApiErrorNames.CATEGORY_NOT_EXIST));
         }
         const categoryId = category.id;
+        if (!page) {
+            page = 1;
+        }
+        if (!pagesize) {
+            pagesize = this.ctx.app.config.pageSize;
+        }
+
         const CategoryModel = ctx.model.ArticleCategory;
         const ArticleModel = ctx.model.Article;
         ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
@@ -338,9 +357,25 @@ export default class ArticleService extends Service {
                 },
             ],
             order: [
+                ['isTop', 'DESC'],
                 ['sort', 'ASC'],
                 ['publishAt', 'DESC'],
             ],
+            offset: (page - 1) * pagesize,
+            limit: pagesize,
         });
+    }
+
+    async publicShowArticle(payload) {
+        const {ctx} = this;
+        const articleIdResult = await this.findByIdExtend(payload.id);
+        if (articleIdResult) {
+            return articleIdResult;
+        }
+        const articleCodeResult = await this.findByCodeExtend(payload.id);
+        if (articleCodeResult) {
+            return articleCodeResult;
+        }
+        throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, ctx.__(ApiErrorNames.ARTICLE_NOT_EXIST));
     }
 }

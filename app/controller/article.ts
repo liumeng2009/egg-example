@@ -8,6 +8,7 @@ export default class ArticleController extends Controller {
     public articleDeleteTransfer;
     public articleUpdateTransfer;
     public articlePublicIndexTransfer;
+    public articlePublicShowTransfer;
     constructor(ctx) {
         super(ctx);
         this.articleIndexTransfer = {
@@ -68,6 +69,11 @@ export default class ArticleController extends Controller {
         };
         this.articlePublicIndexTransfer = {
             code: {type: 'string', required: true},
+            page: {type: 'number', required: false, convertType: 'int', default: 1},
+            pagesize: {type: 'number', required: false, convertType: 'int',  default: ctx.app.config.pagesize},
+        };
+        this.articlePublicShowTransfer = {
+            id: {type: 'string', required: true},
         };
     }
 
@@ -143,7 +149,14 @@ export default class ArticleController extends Controller {
         const {ctx, service} = this;
         ctx.validate(this.articlePublicIndexTransfer, ctx.query);
         const payload = ctx.query;
-        const res = await service.article.publicIndexByCategoryCode(payload.code);
+        const res = await service.article.publicIndexByCategoryCode(payload);
+        await ctx.helper.success(ctx, res, undefined);
+    }
+    async publicShow() {
+        const {ctx, service} = this;
+        ctx.validate(this.articlePublicShowTransfer, ctx.params);
+        const payload = ctx.params;
+        const res = await service.article.publicShowArticle(payload);
         await ctx.helper.success(ctx, res, undefined);
     }
 }
