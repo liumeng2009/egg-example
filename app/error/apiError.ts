@@ -4,6 +4,8 @@ export class ApiError extends Error {
     public status: any = 0;
     constructor(error_name, errorMessage) {
         super();
+        console.log(error_name);
+        console.log(errorMessage);
         const error_info = ErrorTools.getErrorInfo(error_name);
         this.name = error_name;
         this.status = error_info.code;
