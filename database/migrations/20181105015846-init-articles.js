@@ -8,7 +8,7 @@ module.exports = {
           id:{type:INTEGER,primaryKey:true,autoIncrement:true,comment:'自增主键'},
           channelId:{type:INTEGER,allowNull:false},
           categoryId:{type:INTEGER,allowNull:false},
-          title:{type:STRING(100),allowNull:false},
+          title:{type:STRING(100)},
           code: {type:STRING(50), unique: true},
           imgUrl:{type:STRING(255),comment:'封面图片'},
           zhaiyao:{type:STRING(255),comment:'摘要'},

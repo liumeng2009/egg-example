@@ -42,7 +42,7 @@ export default (app: Application) => {
   router.post('/api/content/article/delete', controller.article.destroy);
   router.post('/api/content/article/auditing', controller.article.auditing);
   router.get('/api/content/article/:id', controller.article.show);
-  router.get('/api/content/article/code/:code', controller.article.showByCode);
+  // router.get('/api/content/article/code/:code', controller.article.showByCode);
   router.post('/api/content/article', controller.article.create);
   router.put('/api/content/article', controller.article.update);
 

@@ -83,7 +83,17 @@ export default class ArticleController extends Controller {
         await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.articleIndexTransfer, ctx.query);
         const payload = ctx.query;
-        const res = await service.article.index(payload);
+        let res ;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.article.index(payload);
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.article.indexEn(payload);
+                break;
+            default:
+                res = await service.article.index(payload);
+        }
         await ctx.helper.success(ctx, res, undefined);
     }
 
@@ -93,10 +103,20 @@ export default class ArticleController extends Controller {
         await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.articleShowTransfer, ctx.params);
         const payload = ctx.params;
-        const res = await service.article.findByIdExtend(payload.id);
+        let res ;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.article.findByIdExtend(payload.id);
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.article.findByIdExtendEn(payload.id);
+                break;
+            default:
+                res = await service.article.findByIdExtend(payload.id);
+        }
         await ctx.helper.success(ctx, res, undefined);
     }
-    async showByCode() {
+/*    async showByCode() {
         const {ctx, service} = this;
         const device = ctx.query.device;
         await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
@@ -104,7 +124,7 @@ export default class ArticleController extends Controller {
         const payload = ctx.params;
         const res = await service.article.findById(payload.code);
         await ctx.helper.success(ctx, res, undefined);
-    }
+    }*/
 
     async create() {
         const {ctx, service} = this;
@@ -112,7 +132,17 @@ export default class ArticleController extends Controller {
         await service.authAuthInRole.check('article', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.articleTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
-        const res = await service.article.create(payload);
+        let res;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.article.create(payload);
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.article.createEn(payload);
+                break;
+            default:
+                res = await service.article.create(payload);
+        }
         await ctx.helper.success(ctx, res, '');
     }
 
@@ -120,10 +150,19 @@ export default class ArticleController extends Controller {
         const {ctx, service} = this;
         const device = ctx.query.device;
         await service.authAuthInRole.check('article', 'edit', ctx.request.headers.authorization, device);
-        console.log(ctx.request.body);
         ctx.validate(this.articleUpdateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
-        const res = await service.article.update(payload);
+        let res;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.article.update(payload);
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.article.updateEn(payload);
+                break;
+            default:
+                res = await service.article.update(payload);
+        }
         await ctx.helper.success(ctx, res, '');
     }
 
@@ -149,14 +188,34 @@ export default class ArticleController extends Controller {
         const {ctx, service} = this;
         ctx.validate(this.articlePublicIndexTransfer, ctx.query);
         const payload = ctx.query;
-        const res = await service.article.publicIndexByCategoryCode(payload);
+        let res;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.article.publicIndexByCategoryCode(payload, 'zh');
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.article.publicIndexByCategoryCode(payload, 'en');
+                break;
+            default:
+                res = await service.article.publicIndexByCategoryCode(payload, 'zh');
+        }
         await ctx.helper.success(ctx, res, undefined);
     }
     async publicShow() {
         const {ctx, service} = this;
         ctx.validate(this.articlePublicShowTransfer, ctx.params);
         const payload = ctx.params;
-        const res = await service.article.publicShowArticle(payload);
+        let res;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.article.publicShowArticle(payload, 'zh');
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.article.publicShowArticle(payload, 'en');
+                break;
+            default:
+                res = await service.article.publicShowArticle(payload, 'zh');
+        }
         await ctx.helper.success(ctx, res, undefined);
     }
 }
