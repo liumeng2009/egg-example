@@ -30,8 +30,15 @@ export default class ArticleCategoryService extends Service {
             },
         });
     }
-    async index(channelId) {
+    async index(channelId, lang) {
+        let attrs;
+        if (lang === 'en') {
+            attrs = ['id' , ['name_en', 'name'], 'code', 'channelId', 'sort'];
+        } else {
+            attrs = ['id' , 'name', 'code', 'channelId', 'sort'];
+        }
         return this.ctx.model.ArticleCategory.findAll({
+            attributes: attrs,
             where: {
                 channelId: channelId,
                 status: 1,
@@ -42,14 +49,14 @@ export default class ArticleCategoryService extends Service {
             ],
         });
     }
-    async create(payload) {
+    async create(payload, lang) {
         const {ctx, service} = this;
         const channelId = payload.channelId;
         const parentId = payload.parentId;
         const code = payload.code;
         const channelResult = await service.channel.findById(channelId);
         if (!channelResult) {
-           throw new ApiError(ApiErrorNames.CHANNEL_NOT_EXIST, undefined);
+           throw new ApiError(ApiErrorNames.CHANNEL_NOT_EXIST, ctx.__(ApiErrorNames.CHANNEL_NOT_EXIST));
         }
         const checkCode = await this.findByCode(code)
         if (checkCode) {
@@ -58,10 +65,15 @@ export default class ArticleCategoryService extends Service {
         if (parentId !== 0) {
             const parentResult = service.articleCategory.findById(parentId);
             if (!parentResult) {
-                throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST, undefined);
+                throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST, ctx.__(ApiErrorNames.CATEGORY_NOT_EXIST));
             }
         }
+        if (lang === 'en') {
+            payload.name_en = payload.name;
+            payload.name = '';
+        }
         const t = await ctx.model.transaction();
+        console.log(payload);
         try {
             const addResult = await ctx.model.ArticleCategory.create(payload, {transaction: t});
             const parentArray = [];
@@ -92,5 +104,22 @@ export default class ArticleCategoryService extends Service {
                 await this.findParentCategory(result.parentId, resultArray);
             }
         }
+    }
+    async destroy(payload) {
+        const {ctx} = this;
+        const ArticleCategoryModel = ctx.model.ArticleCategory;
+        let whereStr = {};
+        if (payload instanceof Array && payload.length > 0) {
+            whereStr = {
+                id: {$or : payload},
+            };
+        } else {
+            whereStr = {
+                id: 0,
+            };
+        }
+        return ArticleCategoryModel.update({status: 0}, {
+            where: whereStr,
+        });
     }
 }

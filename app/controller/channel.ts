@@ -12,7 +12,17 @@ export default class ChannelController extends Controller {
         const {ctx, service} = this;
         const device = ctx.query.device;
         await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device);
-        const res = await service.channel.index();
+        let res;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.channel.index('zh');
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.channel.index('en');
+                break;
+            default:
+                res = await service.channel.index('zh');
+        }
         await ctx.helper.success(ctx, res, undefined);
     }
     async show() {

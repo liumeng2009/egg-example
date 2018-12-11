@@ -63,6 +63,7 @@ module.exports = (app) => {
             const attrs = ['id', 'title', 'sort', 'status', 'isComment',
                 'isTop', 'isRed', 'isHot', 'isSlide', 'publishAt',
             ];
+            const attrsCate = ['id', 'name'];
             if (!categoryId) {
                 return this.ctx.model.Article.findAndCountAll ({
                     attributes: attrs,
@@ -70,6 +71,7 @@ module.exports = (app) => {
                     include: [
                         {
                             model: CategoryModel,
+                            attributes: attrsCate,
                             require: true,
                         },
                     ],
@@ -88,6 +90,7 @@ module.exports = (app) => {
                     include: [
                         {
                             model: CategoryModel,
+                            attributes: attrsCate,
                             require: true,
                             where: {
                                 parent_list: {
@@ -167,6 +170,7 @@ module.exports = (app) => {
             const attrs = ['id', ['title_en', 'title'], 'sort', 'status', 'isComment',
                 'isTop', 'isRed', 'isHot', 'isSlide', 'publishAt',
             ];
+            const attrsCate = ['id', ['name_en', 'name']];
             if (!categoryId) {
                 return this.ctx.model.Article.findAndCountAll ({
                     attributes: attrs,
@@ -174,6 +178,7 @@ module.exports = (app) => {
                     include: [
                         {
                             model: CategoryModel,
+                            attributes: attrsCate,
                             require: true,
                         },
                     ],
@@ -192,6 +197,7 @@ module.exports = (app) => {
                     include: [
                         {
                             model: CategoryModel,
+                            attributes: attrsCate,
                             require: true,
                             where: {
                                 parent_list: {
