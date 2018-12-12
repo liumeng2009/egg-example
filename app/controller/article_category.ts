@@ -4,10 +4,14 @@ export default class ChannelController extends Controller {
     public categoryIndexTransfer;
     public categoryCreateTransfer;
     public categoryDeleteTransfer;
+    public categoryShowTransfer;
     constructor(ctx) {
         super(ctx);
         this.categoryIndexTransfer = {
             channelId: {type: 'number', required: true, convertType: 'int'},
+        };
+        this.categoryShowTransfer = {
+            id: {type: 'number', required: true, convertType: 'int'},
         };
         this.categoryCreateTransfer = {
             channelId: {type: 'number', required: true, convertType: 'int'},
@@ -35,6 +39,25 @@ export default class ChannelController extends Controller {
                 break;
             default:
                 res = await service.articleCategory.index(ctx.query.channelId, 'zh');
+        }
+        await ctx.helper.success(ctx, res, undefined);
+    }
+    async show() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device);
+        ctx.validate(this.categoryShowTransfer, ctx.params);
+        const payload = ctx.params;
+        let res ;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.articleCategory.show(payload.id, 'zh');
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.articleCategory.show(payload.id, 'en');
+                break;
+            default:
+                res = await service.articleCategory.show(payload.id, 'zh');
         }
         await ctx.helper.success(ctx, res, undefined);
     }

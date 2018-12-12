@@ -49,6 +49,28 @@ export default class ArticleCategoryService extends Service {
             ],
         });
     }
+    async show(id, lang) {
+        const {ctx} = this;
+        let attrs;
+        if (lang === 'en') {
+            attrs = ['id', ['name_en', 'name'], 'code', 'channelId',
+                'parentId', 'parent_list', 'level', 'status', 'sort'];
+        } else {
+            attrs = ['id', 'name', 'code', 'channelId',
+                'parentId', 'parent_list', 'level', 'status', 'sort'];
+        }
+        const cateResult = this.ctx.model.ArticleCategory.findOne({
+            attributes: attrs,
+            where: {
+                status: 1,
+                id: id,
+            },
+        });
+        if (!cateResult) {
+            throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST, ctx.__(ApiErrorNames.CATEGORY_NOT_EXIST));
+        }
+        return cateResult;
+    }
     async create(payload, lang) {
         const {ctx, service} = this;
         const channelId = payload.channelId;
