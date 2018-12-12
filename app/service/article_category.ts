@@ -33,9 +33,9 @@ export default class ArticleCategoryService extends Service {
     async index(channelId, lang) {
         let attrs;
         if (lang === 'en') {
-            attrs = ['id' , ['name_en', 'name'], 'code', 'channelId', 'sort'];
+            attrs = ['id' , ['name_en', 'name'], 'code', 'channelId', 'sort', 'level'];
         } else {
-            attrs = ['id' , 'name', 'code', 'channelId', 'sort'];
+            attrs = ['id' , 'name', 'code', 'channelId', 'sort', 'level'];
         }
         return this.ctx.model.ArticleCategory.findAll({
             attributes: attrs,
@@ -52,19 +52,32 @@ export default class ArticleCategoryService extends Service {
     async show(id, lang) {
         const {ctx} = this;
         let attrs;
+        let attrs_channel;
         if (lang === 'en') {
             attrs = ['id', ['name_en', 'name'], 'code', 'channelId',
                 'parentId', 'parent_list', 'level', 'status', 'sort'];
+            attrs_channel = ['id', ['name_en', 'name']];
         } else {
             attrs = ['id', 'name', 'code', 'channelId',
                 'parentId', 'parent_list', 'level', 'status', 'sort'];
+            attrs_channel = ['id', 'name'];
         }
+        const ArticleCategoryModel = ctx.model.ArticleCategory;
+        const ChannelModel = ctx.model.Channel;
+        ArticleCategoryModel.belongsTo(ChannelModel, {foreignKey: 'channelId'});
         const cateResult = this.ctx.model.ArticleCategory.findOne({
             attributes: attrs,
             where: {
                 status: 1,
                 id: id,
             },
+            include: [
+                {
+                    attributes: attrs_channel,
+                    required: true,
+                    model: ChannelModel,
+                }
+            ],
         });
         if (!cateResult) {
             throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST, ctx.__(ApiErrorNames.CATEGORY_NOT_EXIST));
@@ -92,24 +105,26 @@ export default class ArticleCategoryService extends Service {
         }
         if (lang === 'en') {
             payload.name_en = payload.name;
-            payload.name = '';
+            payload.name = null;
         }
         const t = await ctx.model.transaction();
         console.log(payload);
         try {
             const addResult = await ctx.model.ArticleCategory.create(payload, {transaction: t});
             const parentArray = [];
-            await this.findParentCategory(addResult.id, parentArray);
-            let parentList = ',' + addResult.id;
-            for (const parent of parentArray) {
-
-                parentList = parentList + ',' + parent;
+            await this.findParentCategory(addResult.parentId, parentArray);
+            let parentList = '';
+            console.log(parentArray);
+            for (let i = 0; i < parentArray.length; i++) {
+                parentList = parentList + ',' + parentArray[i];
             }
+            parentList = parentList + ',' + addResult.id;
             payload.id = addResult.id;
             payload.parent_list = parentList;
             await addResult.update(payload, {transaction: t});
             t.commit();
         } catch (err) {
+            console.log(err);
             t.rollback();
             throw new ApiError(ApiErrorNames.CATEGORY_SAVE_FAILED, ctx.__(ApiErrorNames.CATEGORY_SAVE_FAILED, err));
         }
