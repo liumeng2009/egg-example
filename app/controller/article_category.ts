@@ -3,6 +3,7 @@ import {Controller} from 'egg';
 export default class ChannelController extends Controller {
     public categoryIndexTransfer;
     public categoryCreateTransfer;
+    public categoryUpdateTransfer;
     public categoryDeleteTransfer;
     public categoryShowTransfer;
     constructor(ctx) {
@@ -17,8 +18,18 @@ export default class ChannelController extends Controller {
             channelId: {type: 'number', required: true, convertType: 'int'},
             parentId: {type: 'number', required: true, convertType: 'int'},
             name: {type: 'string', required: true},
-            code: {type: 'string', required: true},
-            sort: {type: 'number', required: true, default: 100},
+            code: {type: 'string', required: false},
+            sort: {type: 'number', required: false, default: 100},
+            status: {type: 'number', required: true, default: 1},
+        };
+        this.categoryUpdateTransfer = {
+            id: {type: 'number', required: true, convertType: 'int'},
+            channelId: {type: 'number', required: true, convertType: 'int'},
+            parentId: {type: 'number', required: true, convertType: 'int'},
+            status: {type: 'number', required: true, default: 1},
+            name: {type: 'string', required: true},
+            code: {type: 'string', required: false},
+            sort: {type: 'number', required: false},
         };
         this.categoryDeleteTransfer = {
             ids: {type: 'array', required: true, itemType: 'int'},
@@ -76,6 +87,24 @@ export default class ChannelController extends Controller {
                 break;
             default:
                 res = await service.articleCategory.create(ctx.request.body, 'zh');
+        }
+        await ctx.helper.success(ctx, res, undefined);
+    }
+    async update() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('category', 'edit', ctx.request.headers.authorization, device);
+        ctx.validate(this.categoryUpdateTransfer, ctx.request.body);
+        let res;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                res = await service.articleCategory.update(ctx.request.body, 'zh');
+                break;
+            case 'en-US,en;q=0.5':
+                res = await service.articleCategory.update(ctx.request.body, 'en');
+                break;
+            default:
+                res = await service.articleCategory.update(ctx.request.body, 'zh');
         }
         await ctx.helper.success(ctx, res, undefined);
     }

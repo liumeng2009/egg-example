@@ -39,6 +39,7 @@ export default (app: Application) => {
   router.post('/api/content/category', controller.articleCategory.create);
   router.post('/api/content/category/delete', controller.articleCategory.destroy);
   router.get('/api/content/category/:id', controller.articleCategory.show);
+  router.put('/api/content/category', controller.articleCategory.update);
 
   router.get('/api/content/article', controller.article.index);
   router.post('/api/content/article/delete', controller.article.destroy);

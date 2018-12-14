@@ -129,6 +129,54 @@ export default class ArticleCategoryService extends Service {
             throw new ApiError(ApiErrorNames.CATEGORY_SAVE_FAILED, ctx.__(ApiErrorNames.CATEGORY_SAVE_FAILED, err));
         }
     }
+    async update(payload, lang) {
+        const {ctx, service} = this;
+        const ArticleCategoryModel = ctx.model.ArticleCategory;
+        const categoryResult = await service.articleCategory.findById(payload.id);
+        if (!categoryResult) {
+            throw new ApiError(ApiErrorNames.CATEGORY_NOT_EXIST, ctx.__(ApiErrorNames.CATEGORY_NOT_EXIST));
+        }
+        // 检查code
+        const checkCode = await ArticleCategoryModel.findOne({
+            where: {
+                id: {
+                    $ne: categoryResult.id,
+                },
+                code: {
+                    $eq: payload.code,
+                },
+                status: 1,
+            },
+        });
+        if (checkCode) {
+            throw new ApiError(ApiErrorNames.CATEGORY_CODE_IS_EXIST,
+                ctx.__(ApiErrorNames.CATEGORY_CODE_IS_EXIST));
+        }
+
+        // code置空
+        if (payload.code === undefined || payload.code === '') {
+            payload.code = null;
+        }
+
+        // 如果parentId被改动了，则需要组合新的parent_list
+        if (payload.parentId !== categoryResult.parentId) {
+            const parentArray = [];
+            await this.findParentCategory(payload.parentId, parentArray);
+            let parentList = '';
+            for (let i = 0; i < parentArray.length; i++) {
+                parentList = parentList + ',' + parentArray[i];
+            }
+            parentList = parentList + ',' + payload.id;
+            payload.parent_list = parentList;
+        }
+        // 根据lang来确定修改name 还是 name_en
+        if (lang === 'en') {
+            payload.name_en = payload.name;
+            payload.name = categoryResult.name;
+        }
+        console.log(payload);
+        await categoryResult.update(payload);
+    }
     async findParentCategory(id, resultArray) {
         const {service} = this;
         const result = await service.articleCategory.findById(id);
