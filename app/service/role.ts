@@ -3,7 +3,7 @@ import {ApiError} from '../error/apiError';
 import {ApiErrorNames} from '../error/apiErrorNames';
 
 export default class RoleService extends Service {
-    async index(payload) {
+    async index(payload, lang) {
         let {page, pagesize} = payload;
         const {searchkey} = payload;
         let whereOBj = {};
@@ -12,23 +12,24 @@ export default class RoleService extends Service {
         } else {
             whereOBj = {status: 1};
         }
-/*        if (page === 0 && pagesize === 0) {
-            return this.ctx.model.Role.findAndCountAll ({
-                where: whereOBj,
-                order: [['createdAt', 'ASC']],
-            });
-        }*/
         if (!page) {
            page = 1;
         }
         if (!pagesize) {
             pagesize = this.ctx.app.config.pageSize;
         }
+        let attrs;
+        if (lang === 'en') {
+            attrs = [];
+        } else {
+            attrs = [];
+        }
         return this.ctx.model.Role.findAndCountAll ({
-           where: whereOBj,
-           order: [['createdAt', 'ASC']],
-           offset: (page - 1) * pagesize,
-           limit: pagesize,
+            attributes: attrs,
+            where: whereOBj,
+            order: [['createdAt', 'ASC']],
+            offset: (page - 1) * pagesize,
+            limit: pagesize,
         });
     }
 
