@@ -29,9 +29,9 @@ module.exports = (app) => {
                 user: saveResult,
             };
         }
-        async checkToken(token: string, device) {
+        async checkToken(token: string, device, lang) {
             const {ctx, service, config} = this;
-            const userResult = await service.user.findByTokenFull(token, device);
+            const userResult = await service.user.findByTokenFull(token, device, lang);
             if (!userResult) {
                 throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, ctx.__(ApiErrorNames.TOKEN_NOT_EXIST));
             }

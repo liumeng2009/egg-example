@@ -6,6 +6,8 @@ module.exports = (app) => {
         id: {type: INTEGER, primaryKey: true, autoIncrement: true},
         name: {type: STRING(100), required: true},
         remark: {type: STRING(300)},
+        name_en: {type: STRING(100)},
+        remark_en: {type: STRING(300)},
         status: INTEGER,
         createdAt: {type: DATE},
         updatedAt: {type: DATE},

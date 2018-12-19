@@ -30,7 +30,18 @@ export default class UserAccessController extends Controller {
         const {ctx, service} = this;
         const token = ctx.request.headers.authorization;
         const device = ctx.query.device;
-        const jwtResult = await service.userAccess.checkToken(token, device);
+        let lang = 'zh';
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        const jwtResult = await service.userAccess.checkToken(token, device, lang);
         await ctx.helper.success(ctx, jwtResult, undefined);
     }
 }

@@ -64,7 +64,18 @@ export default class UserController extends Controller {
         }
         payload.roles = roleArray;
         ctx.validate(this.userIndexTransfer, payload);
-        const res = await service.user.index(payload);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        const res = await service.user.index(payload ,lang);
         await ctx.helper.success(ctx, res, undefined);
     }
 

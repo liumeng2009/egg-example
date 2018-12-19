@@ -20,9 +20,9 @@ export default class RoleService extends Service {
         }
         let attrs;
         if (lang === 'en') {
-            attrs = [];
+            attrs = [['name_en', 'name'], 'id'];
         } else {
-            attrs = [];
+            attrs = ['name', 'id'];
         }
         return this.ctx.model.Role.findAndCountAll ({
             attributes: attrs,
@@ -33,12 +33,21 @@ export default class RoleService extends Service {
         });
     }
 
-    async findByName(name) {
-        return this.ctx.model.Role.findOne({
-            where: {
-                name: name,
-            },
-        });
+    async findByName(name, lang) {
+        if (lang === 'en') {
+            return this.ctx.model.Role.findOne({
+                where: {
+                    name_en: name,
+                },
+            });
+        } else {
+            return this.ctx.model.Role.findOne({
+                where: {
+                    name: name,
+                },
+            });
+        }
+
     }
 
     async findById(id) {
@@ -50,14 +59,38 @@ export default class RoleService extends Service {
         });
     }
 
-    async create(payload) {
+    async show(id, lang) {
+        let attrs;
+        if (lang === 'en') {
+            attrs = [['name_en', 'name'], 'id', ['remark_en', 'remark']];
+        } else {
+            attrs = ['name', 'id', 'remark'];
+        }
+        return this.ctx.model.Role.findOne({
+            attributes: attrs,
+            where: {
+                id: id,
+                status: 1,
+            },
+        });
+    }
+
+    async create(payload, lang) {
         const {ctx} = this;
         if (!payload.role.name || payload.role.name === '') {
-            throw new ApiError(ApiErrorNames.ROLE_NAME_CAN_NOT_NULL, undefined);
+            throw new ApiError(ApiErrorNames.ROLE_NAME_CAN_NOT_NULL, ctx.__(ApiErrorNames.ROLE_NAME_CAN_NOT_NULL));
         }
-        const roleResult = await this.findByName(payload.role.name);
+        const roleResult = await this.findByName(payload.role.name, lang);
         if (roleResult) {
-            throw new ApiError(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, undefined);
+            throw new ApiError(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, ctx.__(ApiErrorNames.ROLE_NAME_MUST_UNIQUE));
+        }
+
+        // 根据语言 改变payload数据
+        if (lang === 'en') {
+            payload.role.name_en = payload.role.name;
+            payload.role.remark_en = payload.role.remark;
+            payload.role.name = '';
+            payload.role.remark = '';
         }
 
         const t = await ctx.model.transaction();
@@ -74,19 +107,28 @@ export default class RoleService extends Service {
             return await t.commit();
         } catch (err) {
             t.rollback();
-            throw new ApiError(ApiErrorNames.ROLE_SAVE_FAILED, [err.message]);
+            throw new ApiError(ApiErrorNames.ROLE_SAVE_FAILED, ctx.__(ApiErrorNames.ROLE_SAVE_FAILED, err));
         }
     }
 
-    async update(payload) {
+    async update(payload, lang) {
+        const {ctx} = this;
         const roleResultId = await this.findById(payload.id);
         if (!roleResultId) {
-            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, ctx.__(ApiErrorNames.ROLE_ID_NOT_EXIST));
         }
-        const roleResultName = await this.findByName(payload.name);
+        const roleResultName = await this.findByName(payload.name, lang);
         if (roleResultName && roleResultName.id !== payload.id) {
-            throw new ApiError(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, undefined);
+            throw new ApiError(ApiErrorNames.ROLE_NAME_MUST_UNIQUE, ctx.__(ApiErrorNames.ROLE_NAME_MUST_UNIQUE));
         }
+        // 根据语言改变数据
+        if (lang === 'en') {
+            payload.name_en = payload.name;
+            payload.remark_en = payload.remark;
+            payload.name = roleResultId.name;
+            payload.remark = roleResultId.remark;
+        }
+        console.log(payload);
         return roleResultId.update(payload);
     }
 
@@ -97,7 +139,7 @@ export default class RoleService extends Service {
         if (payload instanceof Array && payload.length > 0) {
             for (const idObj of payload ) {
                 if (idObj === 1) {
-                    throw new ApiError(ApiErrorNames.ROLE_CAN_NOT_DELETE, undefined);
+                    throw new ApiError(ApiErrorNames.ROLE_CAN_NOT_DELETE, ctx.__(ApiErrorNames.ROLE_CAN_NOT_DELETE));
                 }
             }
             whereStr = {

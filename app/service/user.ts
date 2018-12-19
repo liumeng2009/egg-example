@@ -41,7 +41,7 @@ export default class UserService extends Service {
         });
     }
 
-    async findByTokenFull(token, device) {
+    async findByTokenFull(token, device, lang) {
         const userModel = this.ctx.model.User;
         const roleModel = this.ctx.model.Role;
         const AuthInRoleModel = this.ctx.model.AuthAuthInRole;
@@ -65,11 +65,19 @@ export default class UserService extends Service {
                 token: token,
             };
         }
+        let roleAttrs;
+        if (lang === 'en') {
+            roleAttrs = [['name_en', 'name'], 'id'];
+        } else {
+            roleAttrs = ['name', 'id'];
+        }
+
         return userModel.findOne({
             where: userSelect,
             include : [
                 {
                     model : roleModel,
+                    attributes: roleAttrs,
                     include: [
                         {
                             model: AuthInRoleModel,
@@ -99,7 +107,7 @@ export default class UserService extends Service {
         return user.save();
     }
 
-    async index(payload) {
+    async index(payload, lang) {
         let {page, pagesize} = payload;
         const {searchkey, roles} = payload;
         const userModel = this.ctx.model.User;
@@ -126,10 +134,17 @@ export default class UserService extends Service {
         } else {
             userWhere = {status: 1};
         }
+        let roleAttrs;
+        if (lang === 'en') {
+            roleAttrs = [['name_en', 'name'], 'id'];
+        } else {
+            roleAttrs = ['name', 'id'];
+        }
         return userModel.findAndCountAll ({
             where: userWhere,
             include: [
                 {
+                    attributes: roleAttrs,
                     model: roleModel,
                     where: roleWhere,
                 },
@@ -144,7 +159,7 @@ export default class UserService extends Service {
         const {ctx} = this;
         const userResult = await this.findByMobile(payload.mobile);
         if (userResult) {
-            throw new ApiError(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, undefined);
+            throw new ApiError(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, ctx.__(ApiErrorNames.USER_MOBILE_MUST_UNIQUE));
         }
         const hash = await ctx.genHash(payload.password, ctx.app.config.bcrypt.saltRounds)
         payload.password = hash;
@@ -155,11 +170,11 @@ export default class UserService extends Service {
         const {ctx} = this;
         const userResultId = await this.findById(payload.id);
         if (!userResultId) {
-            throw new ApiError(ApiErrorNames.USER_ID_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.USER_ID_NOT_EXIST, ctx.__(ApiErrorNames.USER_ID_NOT_EXIST));
         }
         const userResultMobile = await this.findByMobile(payload.mobile);
         if (userResultMobile && userResultMobile.id !== payload.id) {
-            throw new ApiError(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, undefined);
+            throw new ApiError(ApiErrorNames.USER_MOBILE_MUST_UNIQUE, ctx.__(ApiErrorNames.USER_MOBILE_MUST_UNIQUE));
         }
         if (userResultId.password === payload.password) {
             // 说明没有改密码 保持不变
@@ -173,15 +188,15 @@ export default class UserService extends Service {
     async changePassword(payload, token, device) {
         const {ctx, service} = this;
         if (!payload.new_password === payload.new_password_compare) {
-            throw new ApiError(ApiErrorNames.PASSWORD_COMPARE_ERROR, undefined);
+            throw new ApiError(ApiErrorNames.PASSWORD_COMPARE_ERROR, ctx.__(ApiErrorNames.PASSWORD_COMPARE_ERROR));
         }
         const userResult = await service.user.findByToken(token, device);
         if (!userResult) {
-            throw new ApiError(ApiErrorNames.USER_ID_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.USER_ID_NOT_EXIST, ctx.__(ApiErrorNames.USER_ID_NOT_EXIST));
         }
         const verifyPsw = await ctx.compare(payload.old_password, userResult.password);
         if (!verifyPsw) {
-            throw new ApiError(ApiErrorNames.OLD_PASSWORD_ERROR, undefined);
+            throw new ApiError(ApiErrorNames.OLD_PASSWORD_ERROR, ctx.__(ApiErrorNames.OLD_PASSWORD_ERROR));
         }
         const hash = await ctx.genHash(payload.new_password, ctx.app.config.bcrypt.saltRounds)
         return userResult.update({password: hash});
@@ -193,7 +208,7 @@ export default class UserService extends Service {
         if (payload instanceof Array && payload.length > 0) {
             for (const idObj of payload ) {
                 if (idObj === 1) {
-                    throw new ApiError(ApiErrorNames.ADMIN_CAN_NOT_DELETE, undefined);
+                    throw new ApiError(ApiErrorNames.ADMIN_CAN_NOT_DELETE, ctx.__(ApiErrorNames.ADMIN_CAN_NOT_DELETE));
                 }
             }
             whereStr = {
