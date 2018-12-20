@@ -18,7 +18,18 @@ export default class ElastiCController extends Controller {
         // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.elasticCreateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
-        const res = await service.elasticsearch.create(payload.ids);
+        let lang = 'zh';
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        const res = await service.elasticsearch.create(payload.ids, lang);
         await ctx.helper.success(ctx, res, '');
     }
     async destroy() {
@@ -27,7 +38,18 @@ export default class ElastiCController extends Controller {
         // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.elasticCreateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
-        const res = await service.elasticsearch.destroy(payload.ids);
+        let lang = 'zh';
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        const res = await service.elasticsearch.destroy(payload.ids, lang);
         await ctx.helper.success(ctx, res, '');
     }
     async show() {
@@ -36,13 +58,35 @@ export default class ElastiCController extends Controller {
         // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.elasticShowTransfer, ctx.params);
         const payload = ctx.params || {};
-        const res = await service.elasticsearch.show(payload);
+        let lang = 'zh';
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        const res = await service.elasticsearch.show(payload, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
     async search() {
         const {ctx, service} = this;
         const searchkey = ctx.query.searchkey;
-        const res = await service.elasticsearch.search(searchkey);
+        let lang = 'zh';
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        const res = await service.elasticsearch.search(searchkey, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
 }

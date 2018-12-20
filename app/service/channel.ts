@@ -15,8 +15,15 @@ export default class ChannelService extends Service {
             },
         });
     }
-    async findById(id) {
+    async findById(id, lang) {
+        let attrs ;
+        if (lang === 'en') {
+            attrs = ['id', ['name_en', 'name']];
+        } else {
+            attrs = ['id', 'name'];
+        }
         return this.ctx.model.Channel.findOne({
+            attributes: attrs,
             where: {
                 status: 1,
                 id: id,

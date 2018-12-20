@@ -13,7 +13,7 @@ export default class ElasticsearchService extends Service {
         });
     }
 
-    async create(payload) {
+    async create(payload, lang) {
         let whereStr = {};
         if (payload instanceof Array && payload.length > 0) {
             whereStr = {
@@ -54,18 +54,32 @@ export default class ElasticsearchService extends Service {
                 index: {
                     _index: 'egg',
                     _type: 'articles',
-                    _id: article.id,
+                    _id: lang==='en'?('1000' + article.id):('2000' + article.id),
                 },
             };
-            const articleJson = {
-                id: article.id,
-                title: article.title,
-                zhaiyao: article.zhaiyao,
-                content: article.content,
-                publishAt: article.publishAt,
-                category: article.article_category.name,
-                channel: article.channel.name,
-            };
+            let articleJson;
+            if (lang === 'en') {
+                articleJson = {
+                    id: '1000' + article.id,
+                    title: article.title_en,
+                    zhaiyao: article.zhaiyao_en,
+                    content: article.content_en,
+                    publishAt: article.publishAt,
+                    category: article.article_category.name_en,
+                    channel: article.channel.name_en,
+                };
+            } else {
+                articleJson = {
+                    id: '2000' + article.id,
+                    title: article.title,
+                    zhaiyao: article.zhaiyao,
+                    content: article.content,
+                    publishAt: article.publishAt,
+                    category: article.article_category.name,
+                    channel: article.channel.name,
+                };
+            }
+
             articleToElasticJson.push(actionJson);
             articleToElasticJson.push(articleJson);
         }
@@ -87,7 +101,7 @@ export default class ElasticsearchService extends Service {
 
     }
 
-    async destroy(payload) {
+    async destroy(payload, lang) {
         const ArticleModel = this.ctx.model.Article;
         let whereStr = {};
         const articleToElasticJson: any[] = []
@@ -101,7 +115,7 @@ export default class ElasticsearchService extends Service {
                     delete: {
                         _index: 'egg',
                         _type: 'articles',
-                        _id: id,
+                        _id: lang === 'en' ? ('1000' + id) : ('2000' + id),
                     },
                 };
                 articleToElasticJson.push(actionJson);
@@ -123,14 +137,14 @@ export default class ElasticsearchService extends Service {
         });
         return elasticBulk;
     }
-    async show(payload) {
+    async show(payload, lang) {
         return this.client.get({
             index: 'egg',
             type: 'articles',
-            id: payload.id,
+            id: lang === 'en' ? ('1000' + payload.id) : ('2000' + payload.id),
         });
     }
-    async search(searchkey) {
+    async search(searchkey, lang) {
         return this.client.search({
             index: 'egg',
             size: 10,
@@ -146,6 +160,9 @@ export default class ElasticsearchService extends Service {
                             },
                             {
                                 match: {content: searchkey},
+                            },
+                            {
+                                match: {lang: lang},
                             },
                         ],
                     },

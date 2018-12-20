@@ -4,7 +4,7 @@ import * as elasticsearch from 'elasticsearch';
 export default class UpdateElasticsearch extends Subscription {
     static get schedule() {
         return {
-            interval: '1h', // 1 分钟间隔
+            interval: '1m', // 1 分钟间隔
             type: 'all', // 指定所有的 worker 都需要执行
             immediate: true,
             disable: false,
@@ -27,11 +27,11 @@ export default class UpdateElasticsearch extends Subscription {
             include: [
                 {
                     model: CategoryModel,
-                    require: true,
+                    required: true,
                 },
                 {
                     model: ChannelModel,
-                    require: true,
+                    required: true,
                 },
             ],
             order: [
@@ -39,26 +39,47 @@ export default class UpdateElasticsearch extends Subscription {
                 ['publishAt', 'DESC'],
             ],
         });
+
         const articleToElasticJson: any[] = []
         for (const article of articles) {
             const actionJson = {
                 index: {
                     _index: 'egg',
                     _type: 'articles',
-                    _id: article.id,
+                    _id: '2000'+article.id,
                 },
             };
             const articleJson = {
-                id: article.id,
+                id: '2000'+article.id,
                 title: article.title,
                 zhaiyao: article.zhaiyao,
                 content: article.content,
                 publishAt: article.publishAt,
                 category: article.article_category.name,
                 channel: article.channel.name,
+                lang: 'zh'
+            };
+            const actionJsonEn = {
+                index: {
+                    _index: 'egg',
+                    _type: 'articles',
+                    _id: '1000'+article.id,
+                },
+            };
+            const articleJsonEn = {
+                id: '1000'+article.id,
+                title: article.title_en,
+                zhaiyao: article.zhaiyao_en,
+                content: article.content_en,
+                publishAt: article.publishAt,
+                category: article.article_category.name_en,
+                channel: article.channel.name_en,
+                lang: 'en'
             };
             articleToElasticJson.push(actionJson);
             articleToElasticJson.push(articleJson);
+            articleToElasticJson.push(actionJsonEn);
+            articleToElasticJson.push(articleJsonEn);
         }
         if (articleToElasticJson.length === 0) {
             // throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
