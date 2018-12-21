@@ -54,7 +54,7 @@ export default class ElasticsearchService extends Service {
                 index: {
                     _index: 'egg',
                     _type: 'articles',
-                    _id: lang==='en'?('1000' + article.id):('2000' + article.id),
+                    _id: lang === 'en' ? ('1000' + article.id) : ('2000' + article.id),
                 },
             };
             let articleJson;

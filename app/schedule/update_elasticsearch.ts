@@ -46,35 +46,35 @@ export default class UpdateElasticsearch extends Subscription {
                 index: {
                     _index: 'egg',
                     _type: 'articles',
-                    _id: '2000'+article.id,
+                    _id: '2000' + article.id,
                 },
             };
             const articleJson = {
-                id: '2000'+article.id,
+                id: '2000' + article.id,
                 title: article.title,
                 zhaiyao: article.zhaiyao,
                 content: article.content,
                 publishAt: article.publishAt,
                 category: article.article_category.name,
                 channel: article.channel.name,
-                lang: 'zh'
+                lang: 'zh',
             };
             const actionJsonEn = {
                 index: {
                     _index: 'egg',
                     _type: 'articles',
-                    _id: '1000'+article.id,
+                    _id: '1000' + article.id,
                 },
             };
             const articleJsonEn = {
-                id: '1000'+article.id,
+                id: '1000' + article.id,
                 title: article.title_en,
                 zhaiyao: article.zhaiyao_en,
                 content: article.content_en,
                 publishAt: article.publishAt,
                 category: article.article_category.name_en,
                 channel: article.channel.name_en,
-                lang: 'en'
+                lang: 'en',
             };
             articleToElasticJson.push(actionJson);
             articleToElasticJson.push(articleJson);

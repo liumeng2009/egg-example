@@ -328,6 +328,34 @@ module.exports = {
           }
       ],{});
 
+      const settingFunc = await queryInterface.bulkInsert('auth_functions',[
+          {
+              name: '系统管理',
+              code: 'system',
+              level: 0,
+              belong: null,
+              sort: 9,
+          }
+      ],{});
+      const settingMenu = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:menuOp,
+              funcId:settingFunc,
+          }
+      ],{});
+      const settingList = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:listOp,
+              funcId:settingFunc,
+          }
+      ],{});
+      const settingEdit = await  queryInterface.bulkInsert('auth_opInFuncs',[
+          {
+              opId:editOp,
+              funcId:settingFunc,
+          }
+      ],{});
+
     // 所有权限赋值给admin role
     const roleHasAllAuth =  await queryInterface.bulkInsert('auth_authInRoles',[
         {roleId:roleResult, authId:authMenu,},
@@ -361,6 +389,9 @@ module.exports = {
         {roleId:roleResult, authId:elasticList,},
         {roleId:roleResult, authId:elasticEdit,},
         {roleId:roleResult, authId:elasticDelete,},
+        {roleId:roleResult, authId:settingList,},
+        {roleId:roleResult, authId:settingEdit,},
+        {roleId:roleResult, authId:settingMenu,},
     ],{})
   },
 
