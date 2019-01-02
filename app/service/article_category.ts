@@ -89,7 +89,7 @@ export default class ArticleCategoryService extends Service {
         const channelId = payload.channelId;
         const parentId = payload.parentId;
         const code = payload.code;
-        const channelResult = await service.channel.findById(channelId);
+        const channelResult = await service.channel.findById(channelId, lang);
         if (!channelResult) {
            throw new ApiError(ApiErrorNames.CHANNEL_NOT_EXIST, ctx.__(ApiErrorNames.CHANNEL_NOT_EXIST));
         }

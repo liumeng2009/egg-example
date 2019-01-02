@@ -297,12 +297,6 @@ module.exports = {
               sort: 8,
           }
       ],{})
-      const elasticMenu = await  queryInterface.bulkInsert('auth_opInFuncs',[
-          {
-              opId:menuOp,
-              funcId:elasticFunc,
-          }
-      ],{});
       const elasticList = await  queryInterface.bulkInsert('auth_opInFuncs',[
           {
               opId:listOp,
@@ -385,7 +379,6 @@ module.exports = {
         {roleId:roleResult, authId:articleCategoryEdit,},
         {roleId:roleResult, authId:articleCategoryDelete,},
         {roleId:roleResult, authId:elasticAdd,},
-        {roleId:roleResult, authId:elasticMenu,},
         {roleId:roleResult, authId:elasticList,},
         {roleId:roleResult, authId:elasticEdit,},
         {roleId:roleResult, authId:elasticDelete,},

@@ -45,11 +45,11 @@ export default (app: Application) => {
   router.post('/api/content/article/delete', controller.article.destroy);
   router.post('/api/content/article/auditing', controller.article.auditing);
   router.get('/api/content/article/:id', controller.article.show);
-  // router.get('/api/content/article/code/:code', controller.article.showByCode);
   router.post('/api/content/article', controller.article.create);
   router.put('/api/content/article', controller.article.update);
 
   router.post('/api/elastic', controller.elastic.create);
+  router.get('/api/elastic/createAll', controller.elastic.createAll);
   router.post('/api/elastic/delete', controller.elastic.destroy);
   router.get('/api/elastic/:id', controller.elastic.show);
   router.get('/api/elastic', controller.elastic.search);

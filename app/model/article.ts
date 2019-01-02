@@ -29,6 +29,7 @@ module.exports = (app) => {
         createdAt: {type: DATE},
         updatedAt: {type: DATE},
         isElastic: {type: BOOLEAN},
+        isElasticEn: {type: BOOLEAN},
     }, {
         createdAt: 'createdAt',
         updatedAt: 'updatedAt',

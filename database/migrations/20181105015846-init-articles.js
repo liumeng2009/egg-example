@@ -22,6 +22,7 @@ module.exports = {
           isHot:{type:BOOLEAN,defaultValue:false,comment:'是否热门'},
           isSlide:{type:BOOLEAN,defaultValue:false,comment:'是否设置为幻灯片'},
           isElastic: {type:BOOLEAN,defaultValue:false,comment:'elastic全文检索的标志位'},
+          isElasticEn: {type:BOOLEAN,defaultValue:false,comment:'elastic全文检索的标志位，英文用'},
           author:{type:INTEGER,allowNull:false,comment:'作者'},
           auditing:{type:INTEGER,allowNull:false,comment:'审核者'},
           publishAt: {type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},

@@ -14,8 +14,8 @@ export default class ElastiCController extends Controller {
     }
     async create() {
         const {ctx, service} = this;
-        // const device = ctx.query.device;
-        // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
         ctx.validate(this.elasticCreateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         let lang = 'zh';
@@ -32,10 +32,17 @@ export default class ElastiCController extends Controller {
         const res = await service.elasticsearch.create(payload.ids, lang);
         await ctx.helper.success(ctx, res, '');
     }
+    async createAll() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('article', 'add', ctx.request.headers.authorization, device);
+        const res = await service.elasticsearch.createAll(true);
+        await ctx.helper.success(ctx, res, '');
+    }
     async destroy() {
         const {ctx, service} = this;
-        // const device = ctx.query.device;
-        // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('elastic', 'delete', ctx.request.headers.authorization, device);
         ctx.validate(this.elasticCreateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         let lang = 'zh';
@@ -54,8 +61,8 @@ export default class ElastiCController extends Controller {
     }
     async show() {
         const {ctx, service} = this;
-        // const device = ctx.query.device;
-        // await service.authAuthInRole.check('elastic', 'add', ctx.request.headers.authorization, device);
+        const device = ctx.query.device;
+        await service.authAuthInRole.check('elastic', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.elasticShowTransfer, ctx.params);
         const payload = ctx.params || {};
         let lang = 'zh';

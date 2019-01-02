@@ -61,6 +61,7 @@ export default class ElasticsearchService extends Service {
             if (lang === 'en') {
                 articleJson = {
                     id: '1000' + article.id,
+                    articleId: article.id,
                     title: article.title_en,
                     zhaiyao: article.zhaiyao_en,
                     content: article.content_en,
@@ -71,6 +72,7 @@ export default class ElasticsearchService extends Service {
             } else {
                 articleJson = {
                     id: '2000' + article.id,
+                    articleId: article.id,
                     title: article.title,
                     zhaiyao: article.zhaiyao,
                     content: article.content,
@@ -97,8 +99,153 @@ export default class ElasticsearchService extends Service {
         return elasticBulk;
     }
 
-    async createAll() {
+    async createAll(forceCover) {
+        const ArticleModel = this.ctx.model.Article;
+        const CategoryModel = this.ctx.model.ArticleCategory;
+        const ChannelModel = this.ctx.model.Channel;
+        ArticleModel.belongsTo(CategoryModel, {foreignKey: 'categoryId'});
+        ArticleModel.belongsTo(ChannelModel, {foreignKey: 'channelId'});
+        // 中文
+        let isElasticTypeArray = [false, null];
+        if (forceCover) {
+            isElasticTypeArray = [false, null, true];
+        }
+        const articles = await ArticleModel.findAll ({
+            where: {
+                isElastic: {
+                    $or: isElasticTypeArray,
+                },
+                status: 1,
+            },
+            include: [
+                {
+                    model: CategoryModel,
+                    required: true,
+                },
+                {
+                    model: ChannelModel,
+                    required: true,
+                },
+            ],
+            order: [
+                ['sort', 'ASC'],
+                ['publishAt', 'DESC'],
+            ],
+        });
 
+        const articleToElasticJson: any[] = []
+        for (const article of articles) {
+            const actionJson = {
+                index: {
+                    _index: 'egg',
+                    _type: 'articles',
+                    _id: '2000' + article.id,
+                },
+            };
+            const articleJson = {
+                id: '2000' + article.id,
+                articleId: article.id,
+                title: article.title,
+                zhaiyao: article.zhaiyao,
+                content: article.content,
+                publishAt: article.publishAt,
+                category: article.article_category.name,
+                channel: article.channel.name,
+                lang: 'zh',
+            };
+            articleToElasticJson.push(actionJson);
+            articleToElasticJson.push(articleJson);
+        }
+        if (articleToElasticJson.length === 0) {
+            // throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
+        } else {
+            const client = new elasticsearch.Client({
+                host: 'localhost:9200',
+                log: 'trace',
+            });
+            await client.bulk({
+                index: 'egg',
+                type: 'articles',
+                body: articleToElasticJson,
+            });
+            await ArticleModel.update({isElastic: true}, {
+                where: {
+                    isElastic: {
+                        $or: [false, null],
+                    },
+                    status: 1,
+                },
+            });
+        }
+
+        // 英文索引
+        const articlesEn = await ArticleModel.findAll ({
+            where: {
+                isElasticEn: {
+                    $or: isElasticTypeArray,
+                },
+                status: 1,
+            },
+            include: [
+                {
+                    model: CategoryModel,
+                    required: true,
+                },
+                {
+                    model: ChannelModel,
+                    required: true,
+                },
+            ],
+            order: [
+                ['sort', 'ASC'],
+                ['publishAt', 'DESC'],
+            ],
+        });
+
+        const articleToElasticJsonEn: any[] = []
+        for (const article of articlesEn) {
+            const actionJsonEn = {
+                index: {
+                    _index: 'egg',
+                    _type: 'articles',
+                    _id: '1000' + article.id,
+                },
+            };
+            const articleJsonEn = {
+                id: '1000' + article.id,
+                articleId: article.id,
+                title: article.title_en,
+                zhaiyao: article.zhaiyao_en,
+                content: article.content_en,
+                publishAt: article.publishAt,
+                category: article.article_category.name_en,
+                channel: article.channel.name_en,
+                lang: 'en',
+            };
+            articleToElasticJsonEn.push(actionJsonEn);
+            articleToElasticJsonEn.push(articleJsonEn);
+        }
+        if (articleToElasticJsonEn.length === 0) {
+            // throw new ApiError(ApiErrorNames.ARTICLE_NOT_EXIST, undefined);
+        } else {
+            const client = new elasticsearch.Client({
+                host: 'localhost:9200',
+                log: 'trace',
+            });
+            await client.bulk({
+                index: 'egg',
+                type: 'articles',
+                body: articleToElasticJsonEn,
+            });
+            await ArticleModel.update({isElastic: true}, {
+                where: {
+                    isElasticEn: {
+                        $or: [false, null],
+                    },
+                    status: 1,
+                },
+            });
+        }
     }
 
     async destroy(payload, lang) {
@@ -151,15 +298,21 @@ export default class ElasticsearchService extends Service {
             body: {
                 query: {
                     bool: {
-                        should: [
+                        must: [
                             {
-                                match: {title: searchkey},
-                            },
-                            {
-                                match: {zhaiyao: searchkey},
-                            },
-                            {
-                                match: {content: searchkey},
+                                bool: {
+                                    should: [
+                                        {
+                                            match: {title: searchkey},
+                                        },
+                                        {
+                                            match: {zhaiyao: searchkey},
+                                        },
+                                        {
+                                            match: {content: searchkey},
+                                        },
+                                    ],
+                                },
                             },
                             {
                                 match: {lang: lang},
