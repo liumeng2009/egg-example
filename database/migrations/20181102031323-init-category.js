@@ -6,7 +6,8 @@ module.exports = {
 
       return queryInterface.createTable('article_categories',{
           id:{type:INTEGER,primaryKey:true,autoIncrement:true,comment:'自增主键'},
-          name:{type:STRING(30),allowNull:false,unique:true,comment:'名称'},
+          name:{type:STRING(30),unique:true,comment:'名称'},
+          name_en:{type:STRING(30),unique:true,comment:'名称 en'},
           code:{type:STRING(30),allowNull:false,unique:true,comment:'缩写，用于调用'},
           channelId:{type:INTEGER,allowNull:false},
           parentId:{type:INTEGER},

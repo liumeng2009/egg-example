@@ -3,7 +3,7 @@ import {ApiError} from '../error/apiError';
 import {ApiErrorNames} from '../error/apiErrorNames';
 
 export default class AuthInRoleService extends Service {
-    async index(roleId) {
+    async index(roleId, lang) {
         const AuthOperateModel = this.ctx.model.AuthOperate;
         const AuthFunctionModel = this.ctx.model.AuthFunction;
         const OpInFuncModel = this.ctx.model.AuthOpInFunc;
@@ -13,6 +13,16 @@ export default class AuthInRoleService extends Service {
         OpInFuncModel.belongsTo(AuthFunctionModel, {foreignKey: 'funcId'});
         RoleModel.hasMany(AuthInRoleModel, {foreignKey: 'roleId'});
         AuthInRoleModel.belongsTo(OpInFuncModel, {foreignKey: 'authId'});
+
+        let functionAttrs;
+        let operationAttrs;
+        if (lang === 'en') {
+            functionAttrs = [['name_en', 'name'], 'id', 'level'];
+            operationAttrs = [['name_en', 'name'], 'id'];
+        } else {
+            functionAttrs = ['name', 'id', 'level'];
+            operationAttrs = ['name', 'id'];
+        }
         return RoleModel.findOne ({
             where: {
                 id: roleId,
@@ -26,9 +36,11 @@ export default class AuthInRoleService extends Service {
                             include: [
                                 {
                                     model: AuthOperateModel,
+                                    attributes: operationAttrs,
                                 },
                                 {
                                     model: AuthFunctionModel,
+                                    attributes: functionAttrs,
                                 },
                             ],
                         },
@@ -38,16 +50,17 @@ export default class AuthInRoleService extends Service {
         });
     }
     // 数据结构规整为webapp需要的格式
-    async clientUse(roleId) {
+    async clientUse(roleId, lang) {
         const result: any[] = [];
-        const roleRes = await this.service.authAuthInRole.index(roleId);
+        const roleRes = await this.service.authAuthInRole.index(roleId, lang);
 
-        const allRes = await this.service.authOpInFunc.index();
+        const allRes = await this.service.authOpInFunc.index(lang);
         const auths = roleRes ? roleRes.auth_authInRoles : [];
         // 规整allRes 第一层功能项
         for (const res of allRes) {
             const ops: any[] = [];
             for (const ro of res.auth_opInFuncs) {
+                console.log(ro.auth_operate.name);
                 const op = {
                     label: ro.auth_operate.name,
                     value: ro.id,
@@ -87,38 +100,39 @@ export default class AuthInRoleService extends Service {
         const {ctx, service} = this;
         const roleResult = await service.role.findById(payload.roleId);
         if (!roleResult) {
-            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, ctx.__(ApiErrorNames.ROLE_ID_NOT_EXIST));
         }
         const opInfuncResult = await service.authOpInFunc.findById(payload.authId);
         if (!opInfuncResult) {
-            throw new ApiError(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, ctx.__(ApiErrorNames.OP_IN_FUNC_NOT_EXIST));
         }
         const authResult = await this.show(payload.roleId, payload.authId);
         if (authResult) {
-            throw new ApiError(ApiErrorNames.AUTH_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.AUTH_EXIST, ctx.__(ApiErrorNames.AUTH_EXIST));
         }
         return ctx.model.AuthAuthInRole.create(payload);
     }
     async destroy(payload) {
-        const {service} = this;
+        const {service, ctx} = this;
         if (payload.roleId === 1) {
-            throw new ApiError(ApiErrorNames.ADMIN_AUTH_CAN_NOT_DELETE, undefined);
+            throw new ApiError(ApiErrorNames.ADMIN_AUTH_CAN_NOT_DELETE,
+                ctx.__(ApiErrorNames.ADMIN_AUTH_CAN_NOT_DELETE));
         }
         const roleResult = await service.role.findById(payload.roleId);
         if (!roleResult) {
-            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.ROLE_ID_NOT_EXIST, ctx.__(ApiErrorNames.ROLE_ID_NOT_EXIST));
         }
         const opInfuncResult = await service.authOpInFunc.findById(payload.authId);
         if (!opInfuncResult) {
-            throw new ApiError(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.OP_IN_FUNC_NOT_EXIST, ctx.__(ApiErrorNames.OP_IN_FUNC_NOT_EXIST));
         }
         const authResult = await this.show(payload.roleId, payload.authId);
         if (!authResult) {
-            throw new ApiError(ApiErrorNames.AUTH_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.AUTH_NOT_EXIST, ctx.__(ApiErrorNames.OP_IN_FUNC_NOT_EXIST));
         }
         return authResult.destroy();
     }
-    async check(func, op, token, device) {
+    async check(func, op, token, device, lang) {
         const { ctx , service} = this;
         await service.userAccess.checkToken(token, device);
         const AuthInRoleModel = ctx.model.AuthAuthInRole;
@@ -144,13 +158,13 @@ export default class AuthInRoleService extends Service {
                 token: token,
             };
         }
-        const functionResult = await service.authFunction.findByCode(func);
+        const functionResult = await service.authFunction.findByCode(func, lang);
         if (!functionResult) {
-            throw new ApiError(ApiErrorNames.AUTH_FUNCTION_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.AUTH_FUNCTION_NOT_EXIST, ctx.__(ApiErrorNames.AUTH_FUNCTION_NOT_EXIST));
         }
-        const operateReulst = await service.authOperate.findByCode(op);
+        const operateReulst = await service.authOperate.findByCode(op, lang);
         if (!operateReulst) {
-            throw new ApiError(ApiErrorNames.AUTH_OPERATE_NOT_EXIST, undefined);
+            throw new ApiError(ApiErrorNames.AUTH_OPERATE_NOT_EXIST, ctx.__(ApiErrorNames.AUTH_OPERATE_NOT_EXIST));
         }
         // 验证权限
         const authResult = await AuthInRoleModel.findAll({
@@ -188,7 +202,13 @@ export default class AuthInRoleService extends Service {
         if (authResult.length > 0) {
             return authResult;
         } else {
-            throw new ApiError(ApiErrorNames.NO_AUTH, [functionResult.name + '的' + operateReulst.name + '权限']);
+            let noAuthStr = '';
+            if (lang === 'en') {
+                noAuthStr = functionResult.name + ' ' + operateReulst.name + 'privilege';
+            } else {
+                noAuthStr = functionResult.name + '的' + operateReulst.name + '权限';
+            }
+            throw new ApiError(ApiErrorNames.NO_AUTH, ctx.__(ApiErrorNames.NO_AUTH, noAuthStr));
         }
     }
 }

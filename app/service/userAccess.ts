@@ -31,6 +31,9 @@ module.exports = (app) => {
         }
         async checkToken(token: string, device, lang) {
             const {ctx, service, config} = this;
+            if (!token || token === '') {
+                throw new ApiError(ApiErrorNames.TOKEN_NOT_EXIST, ctx.__(ApiErrorNames.TOKEN_NOT_EXIST));
+            }
             await app.jwt.verify(token, config.jwt.secret);
             const userResult = await service.user.findByTokenFull(token, device, lang);
             if (!userResult) {

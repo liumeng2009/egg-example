@@ -5,8 +5,8 @@ module.exports = {
   up: async(queryInterface, Sequelize) => {
     // 初始化角色
     const roleResult = await queryInterface.bulkInsert('roles',[
-        {name:'系统管理员',remark:'最高权限'},
-        {name:'管理员',remark:'次要权限'},
+        {name:'系统管理员',name_en:'administrator',remark:'最高权限'},
+        {name:'内容编辑',name_en:'editor',remark:'次要权限'},
     ],{});
     // 初始化系统管理员
     const adminPassword='admin';

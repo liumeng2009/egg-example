@@ -7,6 +7,7 @@ module.exports = {
     return queryInterface.createTable('auth_functions',{
         id:{type:INTEGER,primaryKey:true,autoIncrement:true},
         name:{type:STRING(30),allowNull:false,unique:true},
+        name_en:{type:STRING(30),allowNull:false,unique:true},
         code:{type:STRING(30),allowNull:false,unique:true},
         level: {type:INTEGER,allowNull:false},
         belong: {type:INTEGER},

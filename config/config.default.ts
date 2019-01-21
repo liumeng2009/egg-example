@@ -50,7 +50,7 @@ export default (appInfo: EggAppInfo) => {
 
   config.customLogger = {
       scheduleLogger: {
-          consoleLevel: 'DEBUG',
+          consoleLevel: 'NONE',
           // file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
       },
   };

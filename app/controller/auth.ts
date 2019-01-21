@@ -32,7 +32,18 @@ export default class AuthController extends Controller {
         await service.authAuthInRole.check('authInRole', 'list', ctx.request.headers.authorization, device);
         ctx.validate(this.authIndexTransfer, ctx.params);
         const payload = ctx.params;
-        const res = await service.authAuthInRole.clientUse(payload.roleId);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        const res = await service.authAuthInRole.clientUse(payload.roleId, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
 

@@ -9,7 +9,6 @@ export default class ElasticsearchService extends Service {
         super(ctx)
         this.client = new elasticsearch.Client({
             host: 'localhost:9200',
-            log: 'trace',
         });
     }
 
@@ -237,7 +236,7 @@ export default class ElasticsearchService extends Service {
                 type: 'articles',
                 body: articleToElasticJsonEn,
             });
-            await ArticleModel.update({isElastic: true}, {
+            await ArticleModel.update({isElasticEn: true}, {
                 where: {
                     isElasticEn: {
                         $or: [false, null],

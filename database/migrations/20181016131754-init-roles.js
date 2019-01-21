@@ -7,6 +7,7 @@ module.exports = {
     return queryInterface.createTable('roles',{
         id:{type:INTEGER,primaryKey:true,autoIncrement:true},
         name:{type:STRING(100),unique:true},
+        name_en:{type:STRING(100),unique:true},
         remark:{type:STRING(300)},
         status:{type:INTEGER,defaultValue:1},
         createdAt:{type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},

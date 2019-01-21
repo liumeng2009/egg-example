@@ -71,7 +71,6 @@ export default class UserService extends Service {
         } else {
             roleAttrs = ['name', 'id'];
         }
-
         return userModel.findOne({
             where: userSelect,
             include : [

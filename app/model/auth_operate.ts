@@ -5,6 +5,7 @@ module.exports = (app) => {
     const AuthOperate = app.model.define('auth_operate', {
         id: {type: INTEGER, primaryKey: true, autoIncrement: true},
         name: {type: STRING(30), required: true},
+        name_en: {type: STRING(30), required: true},
         code: {type: STRING(30), required: true},
         status: INTEGER,
         createdAt: {type: DATE},

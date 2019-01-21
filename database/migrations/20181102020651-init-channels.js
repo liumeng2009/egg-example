@@ -7,6 +7,7 @@ module.exports = {
       return queryInterface.createTable('channels',{
           id:{type:INTEGER,primaryKey:true,autoIncrement:true},
           name:{type:STRING(30),allowNull:false,unique:true},
+          name_en:{type:STRING(30),allowNull:false,unique:true},
           code:{type:STRING(30),allowNull:false,unique:true},
           status:{type:INTEGER,defaultValue:1},
           sort:{type:INTEGER},

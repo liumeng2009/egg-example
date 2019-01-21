@@ -14,6 +14,7 @@ module.exports = {
     return queryInterface.createTable('auth_operates',{
         id:{type:INTEGER,primaryKey:true,autoIncrement:true},
         name:{type:STRING(30),allowNull:false,unique:true},
+        name_en:{type:STRING(30),allowNull:false,unique:true},
         code:{type:STRING(30),allowNull:false,unique:true},
         status:{type:INTEGER,defaultValue:1},
         createdAt:{type:DATE,defaultValue: Sequelize.fn('CURRENT_TIMESTAMP')},
