@@ -12,6 +12,7 @@ import AuthOperate from '../../../app/service/auth_operate';
 import AuthOpInFunc from '../../../app/service/auth_opInFunc';
 import Channel from '../../../app/service/channel';
 import Elasticsearch from '../../../app/service/elasticsearch';
+import File from '../../../app/service/file';
 import Role from '../../../app/service/role';
 import Test from '../../../app/service/Test';
 import Upload from '../../../app/service/upload';
@@ -30,6 +31,7 @@ declare module 'egg' {
     authOpInFunc: AuthOpInFunc;
     channel: Channel;
     elasticsearch: Elasticsearch;
+    file: File;
     role: Role;
     test: Test;
     upload: Upload;

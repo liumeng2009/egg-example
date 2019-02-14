@@ -8,6 +8,7 @@ import ArticleCategory from '../../../app/controller/article_category';
 import Auth from '../../../app/controller/auth';
 import Channel from '../../../app/controller/channel';
 import Elastic from '../../../app/controller/elastic';
+import File from '../../../app/controller/file';
 import Home from '../../../app/controller/home';
 import Role from '../../../app/controller/role';
 import Upload from '../../../app/controller/upload';
@@ -22,6 +23,7 @@ declare module 'egg' {
     auth: Auth;
     channel: Channel;
     elastic: Elastic;
+    file: File;
     home: Home;
     role: Role;
     upload: Upload;
