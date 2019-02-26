@@ -29,9 +29,6 @@ export default class AuthController extends Controller {
     async index() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('authInRole', 'list', ctx.request.headers.authorization, device);
-        ctx.validate(this.authIndexTransfer, ctx.params);
-        const payload = ctx.params;
         let lang;
         switch (ctx.request.headers['accept-language']) {
             case 'zh-CN,zh;q=0.5':
@@ -43,6 +40,9 @@ export default class AuthController extends Controller {
             default:
                 lang = 'zh';
         }
+        await service.authAuthInRole.check('authInRole', 'list', ctx.request.headers.authorization, device, lang);
+        ctx.validate(this.authIndexTransfer, ctx.params);
+        const payload = ctx.params;
         const res = await service.authAuthInRole.clientUse(payload.roleId, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
@@ -50,7 +50,18 @@ export default class AuthController extends Controller {
     async create() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('authInRole', 'add', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('authInRole', 'add', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.authTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.authAuthInRole.create(payload);
@@ -60,7 +71,18 @@ export default class AuthController extends Controller {
     async destroy() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('authInRole', 'delete', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('authInRole', 'delete', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.authTransfer, ctx.params);
         const payload = ctx.params || {};
         const res = await service.authAuthInRole.destroy(payload);
@@ -70,6 +92,17 @@ export default class AuthController extends Controller {
     async check() {
         const {ctx, service} = this;
         const device = ctx.query.device;
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
         const token = ctx.request.headers.authorization;
         const func = ctx.request.body.func;
         const op = ctx.request.body.op;
@@ -79,9 +112,8 @@ export default class AuthController extends Controller {
             func: func,
             op: op,
         }
-        console.log(payload);
         ctx.validate(this.authCheckTransfer, payload);
-        const res = await service.authAuthInRole.check(func, op, token, device);
+        const res = await service.authAuthInRole.check(func, op, token, device, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
 }

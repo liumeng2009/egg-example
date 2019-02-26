@@ -80,7 +80,18 @@ export default class ArticleController extends Controller {
     async index() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.articleIndexTransfer, ctx.query);
         const payload = ctx.query;
         let res ;
