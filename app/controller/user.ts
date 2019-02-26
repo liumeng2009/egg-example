@@ -48,7 +48,18 @@ export default class UserController extends Controller {
     async index() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device, lang);
         const payload = ctx.query;
         const roleArray = [];
         if (ctx.query.roles) {
@@ -64,6 +75,14 @@ export default class UserController extends Controller {
         }
         payload.roles = roleArray;
         ctx.validate(this.userIndexTransfer, payload);
+
+        const res = await service.user.index(payload ,lang);
+        await ctx.helper.success(ctx, res, undefined);
+    }
+
+    async show() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
         let lang;
         switch (ctx.request.headers['accept-language']) {
             case 'zh-CN,zh;q=0.5':
@@ -75,14 +94,7 @@ export default class UserController extends Controller {
             default:
                 lang = 'zh';
         }
-        const res = await service.user.index(payload ,lang);
-        await ctx.helper.success(ctx, res, undefined);
-    }
-
-    async show() {
-        const {ctx, service} = this;
-        const device = ctx.query.device;
-        await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device);
+        await service.authAuthInRole.check('user', 'list', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.userShowTransfer, ctx.params);
         const payload = ctx.params;
         const res = await service.user.findById(payload.id);
@@ -105,7 +117,18 @@ export default class UserController extends Controller {
     async create() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('user', 'add', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('user', 'add', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.userTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.user.create(payload);
@@ -114,7 +137,18 @@ export default class UserController extends Controller {
     async update() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('user', 'edit', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('user', 'edit', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.userUpdateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         const res = await service.user.update(payload);
@@ -132,7 +166,18 @@ export default class UserController extends Controller {
     async destroy() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('user', 'delete', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('user', 'delete', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.userDeleteTransfer, ctx.request.body);
         const payload = ctx.request.body.ids;
         const res = await service.user.destroy(payload);

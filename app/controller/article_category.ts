@@ -38,80 +38,95 @@ export default class ChannelController extends Controller {
     async index() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device);
-        ctx.validate(this.categoryIndexTransfer, {channelId: ctx.query.channelId});
-        let res;
+        let lang;
         switch (ctx.request.headers['accept-language']) {
             case 'zh-CN,zh;q=0.5':
-                res = await service.articleCategory.index(ctx.query.channelId, 'zh');
+                lang = 'zh';
                 break;
             case 'en-US,en;q=0.5':
-                res = await service.articleCategory.index(ctx.query.channelId, 'en');
+                lang = 'en';
                 break;
             default:
-                res = await service.articleCategory.index(ctx.query.channelId, 'zh');
+                lang = 'zh';
         }
+        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device, lang);
+        ctx.validate(this.categoryIndexTransfer, {channelId: ctx.query.channelId});
+        const res = await service.articleCategory.index(ctx.query.channelId, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
     async show() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device);
-        ctx.validate(this.categoryShowTransfer, ctx.params);
-        const payload = ctx.params;
-        let res ;
+        let lang;
         switch (ctx.request.headers['accept-language']) {
             case 'zh-CN,zh;q=0.5':
-                res = await service.articleCategory.show(payload.id, 'zh');
+                lang = 'zh';
                 break;
             case 'en-US,en;q=0.5':
-                res = await service.articleCategory.show(payload.id, 'en');
+                lang = 'en';
                 break;
             default:
-                res = await service.articleCategory.show(payload.id, 'zh');
+                lang = 'zh';
         }
+        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device, lang);
+        ctx.validate(this.categoryShowTransfer, ctx.params);
+        const payload = ctx.params;
+        const res = await service.articleCategory.show(payload.id, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
     async create() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('category', 'add', ctx.request.headers.authorization, device);
-        ctx.validate(this.categoryCreateTransfer, ctx.request.body);
-        let res;
+        let lang;
         switch (ctx.request.headers['accept-language']) {
             case 'zh-CN,zh;q=0.5':
-                res = await service.articleCategory.create(ctx.request.body, 'zh');
+                lang = 'zh';
                 break;
             case 'en-US,en;q=0.5':
-                res = await service.articleCategory.create(ctx.request.body, 'en');
+                lang = 'en';
                 break;
             default:
-                res = await service.articleCategory.create(ctx.request.body, 'zh');
+                lang = 'zh';
         }
+        await service.authAuthInRole.check('category', 'add', ctx.request.headers.authorization, device, lang);
+        ctx.validate(this.categoryCreateTransfer, ctx.request.body);
+        const res = await service.articleCategory.create(ctx.request.body, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
     async update() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('category', 'edit', ctx.request.headers.authorization, device);
-        ctx.validate(this.categoryUpdateTransfer, ctx.request.body);
-        let res;
+        let lang;
         switch (ctx.request.headers['accept-language']) {
             case 'zh-CN,zh;q=0.5':
-                res = await service.articleCategory.update(ctx.request.body, 'zh');
+                lang = 'zh';
                 break;
             case 'en-US,en;q=0.5':
-                res = await service.articleCategory.update(ctx.request.body, 'en');
+                lang = 'en';
                 break;
             default:
-                res = await service.articleCategory.update(ctx.request.body, 'zh');
+                lang = 'zh';
         }
+        await service.authAuthInRole.check('category', 'edit', ctx.request.headers.authorization, device, lang);
+        ctx.validate(this.categoryUpdateTransfer, ctx.request.body);
+        const res = await service.articleCategory.update(ctx.request.body, lang);
         await ctx.helper.success(ctx, res, undefined);
     }
     async destroy() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('category', 'delete', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('category', 'delete', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.categoryDeleteTransfer, ctx.request.body);
         const payload = ctx.request.body.ids;
         const res = await service.articleCategory.destroy(payload);

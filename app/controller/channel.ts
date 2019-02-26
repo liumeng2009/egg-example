@@ -11,26 +11,6 @@ export default class ChannelController extends Controller {
     async index() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device);
-        let res;
-        switch (ctx.request.headers['accept-language']) {
-            case 'zh-CN,zh;q=0.5':
-                res = await service.channel.index('zh');
-                break;
-            case 'en-US,en;q=0.5':
-                res = await service.channel.index('en');
-                break;
-            default:
-                res = await service.channel.index('zh');
-        }
-        await ctx.helper.success(ctx, res, undefined);
-    }
-    async show() {
-        const {ctx, service} = this;
-        const device = ctx.query.device;
-        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device);
-        ctx.validate(this.channelShowTransfer, ctx.params);
-        const payload = ctx.params;
         let lang;
         switch (ctx.request.headers['accept-language']) {
             case 'zh-CN,zh;q=0.5':
@@ -42,6 +22,27 @@ export default class ChannelController extends Controller {
             default:
                 lang = 'zh';
         }
+        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device, lang);
+        const res = await service.channel.index(lang);
+        await ctx.helper.success(ctx, res, undefined);
+    }
+    async show() {
+        const {ctx, service} = this;
+        const device = ctx.query.device;
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('category', 'list', ctx.request.headers.authorization, device, lang);
+        ctx.validate(this.channelShowTransfer, ctx.params);
+        const payload = ctx.params;
         const res = await service.channel.findById(payload.id, lang);
         await ctx.helper.success(ctx, res, undefined);
     }

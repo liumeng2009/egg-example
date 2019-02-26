@@ -48,6 +48,8 @@ export default (app: Application) => {
   router.post('/api/content/article', controller.article.create);
   router.put('/api/content/article', controller.article.update);
 
+  router.get('/api/content/file', controller.file.index);
+
   router.post('/api/elastic', controller.elastic.create);
   router.get('/api/elastic/createAll', controller.elastic.createAll);
   router.post('/api/elastic/delete', controller.elastic.destroy);

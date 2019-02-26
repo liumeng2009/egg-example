@@ -111,7 +111,18 @@ export default class ArticleController extends Controller {
     async show() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('article', 'list', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.articleShowTransfer, ctx.params);
         const payload = ctx.params;
         let res ;
@@ -140,7 +151,18 @@ export default class ArticleController extends Controller {
     async create() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('article', 'add', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('article', 'add', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.articleTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         let res;
@@ -160,7 +182,18 @@ export default class ArticleController extends Controller {
     async update() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('article', 'edit', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('article', 'edit', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.articleUpdateTransfer, ctx.request.body);
         const payload = ctx.request.body || {};
         let res;
@@ -180,7 +213,18 @@ export default class ArticleController extends Controller {
     async destroy() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('article', 'delete', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('article', 'delete', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.articleDeleteTransfer, ctx.request.body);
         const payload = ctx.request.body.ids;
         const res = await service.article.destroy(payload);
@@ -189,7 +233,18 @@ export default class ArticleController extends Controller {
     async auditing() {
         const {ctx, service} = this;
         const device = ctx.query.device;
-        await service.authAuthInRole.check('article', 'auditing', ctx.request.headers.authorization, device);
+        let lang;
+        switch (ctx.request.headers['accept-language']) {
+            case 'zh-CN,zh;q=0.5':
+                lang = 'zh';
+                break;
+            case 'en-US,en;q=0.5':
+                lang = 'en';
+                break;
+            default:
+                lang = 'zh';
+        }
+        await service.authAuthInRole.check('article', 'auditing', ctx.request.headers.authorization, device, lang);
         ctx.validate(this.articleDeleteTransfer, ctx.request.body);
         const payload = ctx.request.body.ids;
         const res = await service.article.auditing(payload);
